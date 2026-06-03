@@ -1,0 +1,20 @@
+{
+  "last_iteration": 26,
+  "template_idx": 2,
+  "score_counts": {
+    "0": 26,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0
+  },
+  "consecutive_zeros": 2,
+  "dead_templates": [
+    "G",
+    "A",
+    "H"
+  ],
+  "focus": "D",
+  "updated_at": "2026-06-03T22:03:30.768097+00:00"
+}

@@ -1,0 +1,13 @@
+[project]
+name = "hackmonty-loop"
+version = "0.1.0"
+description = "Autonomous hacking loop for Hack Monty sandbox escape bounty"
+requires-python = ">=3.12"
+dependencies = [
+    "httpx>=0.28",
+    "logfire>=4.35.0",
+    "ollama>=0.4",
+]
+
+[project.scripts]
+hackmonty-loop = "orchestrator:main"
