@@ -558,9 +558,17 @@ fuzz_target!(|data: &[u8]| {
 });
 ```
 
-### 9.4 Results
+### 10.4 Results
 
-**No crashes found** across all three fuzz targets after 1 hour each. Monty's heap and GC implementation appears robust against randomized byte-level fuzzing within the tested allocation patterns.
+**Build failed** on `rustc 1.98.0-nightly (2026-06-02)` due to ASAN linker symbol mismatches in the nightly toolchain. The fuzz harness requires an ASAN-compatible standard library and linker, which is incompatible with the current nightly. Error: `undefined symbol: __sancov_gen_.*` at link time.
+
+**To reproduce successfully:**
+```bash
+rustup install nightly-2026-05-01  # Use a known-compatible nightly
+cargo +nightly-2026-05-01 fuzz run string_input_panic -- -max_total_time=3600
+```
+
+**Assessment**: The existing Monty fuzz corpus (checked into `crates/fuzz/corpus/`) contains hundreds of inputs that have been tested against prior nightly versions. No known crashes exist. Based on our source audit (Section 4), the `unsafe` blocks in the heap layer are well-documented with safety invariants, tested with Miri (`heap.rs:1928-1949`), and guarded by `HeapReader` lifetime management that the borrow checker enforces at compile time. The `NonNull::dangling()` pattern (`heap.rs:312,332`) is safe under current usage but would need re-audit if `BorrowedHeapRead` gains extract methods.
 
 ---
 
