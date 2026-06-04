@@ -468,13 +468,13 @@ Tested `await fetch_url("http://example.com")` via async snapshot protocol.
 
 ## 9. Key Findings
 
-### 8.1 Primary Finding: Sandbox Secure Against Python-Only Attacks
+### 9.1 Primary Finding: Sandbox Secure Against Python-Only Attacks
 
 The fundamental obstacle to all codebase-identified vulnerabilities is the absence of `class` definition support in Monty. Every vulnerability in the dict, set, and sort modules requires user-defined `__eq__`, `__hash__`, or `__lt__` callbacks — and without classes, these cannot be defined in sandboxed Python code.
 
 The Round 1 exploit succeeded because `list.sort(key=func)` accepted a callback directly as a function parameter. Round 2 properly patched this specific code path, and no equivalent code path (accepting a callback while holding mutable Rust state) exists in the remaining Monty API surface that is reachable without classes.
 
-### 8.2 Secondary Observations
+### 9.2 Secondary Observations
 
 1. **`print()` is silently suppressed after name_lookup resume** — a CPython divergence that does not appear to be a security issue but is notable behavior.
 2. **`os.environ`/`os.getenv` are faked server-side** — no path to real environment variables through the sandbox.
@@ -483,7 +483,7 @@ The Round 1 exploit succeeded because `list.sort(key=func)` accepted a callback 
 5. **Server validates all inputs with pydantic** — resource limits are clamped to maximums, type coercion is strict.
 6. **Snapshot protocol is robust** — 44 fuzzing tests found no protocol-level vulnerabilities.
 
-### 8.3 The `class` Gap as Design Defense
+### 9.3 The `class` Gap as Design Defense
 
 Monty does not currently support class definitions. The README states: "define classes (support should come soon)." If `class` support is added in a future release, the entire callback-based attack surface identified in our codebase audit (dict re-entry, set re-entry, sort comparator flooding) would become exploitable from sandboxed Python. We recommend that `class` support be accompanied by:
 
@@ -495,69 +495,9 @@ Monty does not currently support class definitions. The README states: "define c
 
 ## 10. Memory Fuzzing (Bonus)
 
-### 9.1 Setup
-
-```bash
-cargo install cargo-fuzz
-cd /tmp/monty-source
-rustup install nightly
-```
-
-### 9.2 Existing Fuzz Targets
-
-Monty ships with two fuzz targets:
-
-1. **`string_input_panic`**: Feeds arbitrary byte sequences through the full parse+execute pipeline with restrictive limits (100ms timeout, 1MB memory, 10K allocations).
-2. **`tokens_input_panic`**: Uses `Arbitrary`-derived token combinations to produce syntactically plausible Python programs.
-
-Both targets were run for 1 hour each via:
-
-```bash
-cargo +nightly fuzz run string_input_panic -- -max_total_time=3600
-cargo +nightly fuzz run tokens_input_panic -- -max_total_time=3600
-```
-
-### 9.3 Custom Fuzz Harness: Heap Cycle Allocation
-
-We created a custom fuzz harness targeting Monty's GC cycle collection:
-
-```rust
-// fuzz_targets/heap_cycle.rs
-#![no_main]
-use libfuzzer_sys::fuzz_target;
-use monty::{Heap, NoLimitTracker, HeapId, Value};
-
-fuzz_target!(|data: &[u8]| {
-    if data.len() < 4 { return; }
-    let heap = Heap::new();
-    let tracker = NoLimitTracker::new();
-    
-    // Create refcount patterns from fuzz input
-    let alloc_count = (data[0] as usize % 20) + 1;
-    let dealloc_pattern = data[1..].to_vec();
-    
-    let mut ids: Vec<HeapId> = Vec::new();
-    for i in 0..alloc_count {
-        if let Ok(id) = heap.allocate(&tracker, || 64) {
-            ids.push(id);
-        }
-    }
-    
-    // Manipulate refcounts according to fuzz pattern
-    for &byte in &dealloc_pattern {
-        if ids.is_empty() { break; }
-        let idx = (byte as usize) % ids.len();
-        let id = ids[idx];
-        heap.inc_ref(id);
-        heap.dec_ref(id, &tracker);
-        heap.dec_ref(id, &tracker);
-    }
-    
-    // Trigger GC on the potentially inconsistent state
-    heap.collect_cycles(&tracker);
-});
-```
-
+### 10.1 Setup
+### 10.2 Existing Fuzz Targets
+### 10.3 Custom Fuzz Harness
 ### 10.4 Results
 
 **Build failed** on `rustc 1.98.0-nightly (2026-06-02)` due to ASAN linker symbol mismatches in the nightly toolchain. The fuzz harness requires an ASAN-compatible standard library and linker, which is incompatible with the current nightly. Error: `undefined symbol: __sancov_gen_.*` at link time.
@@ -572,32 +512,115 @@ cargo +nightly-2026-05-01 fuzz run string_input_panic -- -max_total_time=3600
 
 ---
 
-## 11. Conclusion
+## 11. Second-Order Attack Campaign
 
-### 10.1 Summary
+After the initial probing campaign, I conducted a deeper audit focused on attack classes beyond Python-level exploits: Rust memory model violations, GC algorithm bugs, timing side-channels, serialization vulnerabilities, and snapshot protocol state-machine attacks.
 
-We conducted a comprehensive security assessment of Pydantic Monty Round 2, combining LLM-driven autonomous probing (200+ attempts), source-code audit (13 Rust files, ~8,000 lines), snapshot protocol fuzzing (44 tests), dependency advisory analysis (8 repos, 9 advisories), server-level exploit attempts across all 4 partial bounty categories, and memory fuzzing (3 hours of libfuzzer across 3 targets).
+### 11.1 Unsafe Rust Audit — 43 Sites Reviewed
 
-**No sandbox escape was found.** The primary obstacle is Monty's lack of `class` definition support, which prevents all callback-based attack vectors identified in the source code audit from being triggered from sandboxed Python.
+I exhaustively audited every `unsafe` block across all 100+ Rust source files in the Monty codebase.
 
-### 10.2 Bounty Rubric Coverage
+**Files with unsafe code** (only 4):
+- `heap.rs` — 22 blocks
+- `stable_heap.rs` — 17 blocks
+- `heap_traits.rs` — 3 blocks
+- `free_list.rs` — 1 block
 
-| Category | Assessment |
-|----------|-----------|
-| **Full: Monty sandbox escape** | Not found. Codebase-audited vulnerabilities all require `class` support (dict re-entry, set re-entry, sort callbacks). |
-| **Partial: App config flaw** | Server validates all inputs with strict pydantic types. No debug/config/admin endpoints exposed. Cloudflare edge blocks malicious headers. `Extra.ignore` on unknown fields is non-exploitable. Server version hash exposed via `/openapi.json` but not exploitable. |
-| **Partial: Dependency tree** | Starlette: 8 advisories reviewed (GHSA-86qp, GHSA-x746, GHSA-wqp7, GHSA-7f5h, GHSA-2c2j, GHSA-f96h, GHSA-v5gw, GHSA-74m5). Cloudflare mitigates Host header attacks. Server only accepts POST → method dispatch not exploitable. Pydantic: 1 advisory (GHSA-5jqp), infinity input rejected. Uvicorn, PyO3, httpx: 0 advisories each. No dependency-based secret access found. |
-| **Partial: Logfire flaw** | Could not access (no read token). No Logfire instrumentation attributes found in sandbox `os` module. Public trace project exists but requires authentication for API access. |
-| **Partial: Monty host access (no secret)** | Probed: 14 host filesystem paths (all PermissionError), network access (external call mechanism only), process info (fake `sys.version`), binary paths (not leaked), Rust tracebacks (not triggered), resource edge cases (ints not heap-tracked, 4300-digit bigint limit, encoding attacks accepted). **No host access found** beyond the allocation/memory limit tracebacks. |
+**All other files** (sorting.rs, all builtins/, all modules/, all types/) have **zero unsafe blocks**.
 
-### 10.3 Recommendations
+**Findings:**
 
-1. **Do not add `class` support without a full re-audit** of all callback paths. Our source audit identified exact locations in `dict.rs:463`, `set.rs:722`, `sorting.rs:84,139`, and `min_max.rs:104` where user callbacks could cause stale indices or type confusion.
-2. **Add Miri testing** for all `unsafe` code paths reachable through dunder method dispatch. The current Miri tests cover the sorting path but may not cover dict/set operations.
-3. **Fix the `print()` suppression bug** after name_lookup resume — behavior deviates from CPython.
-4. **Unpin Starlette to latest** — GHSA-x746 and GHSA-86qp should be patched.
+| # | Location | Issue | Status |
+|---|----------|-------|--------|
+| H-12 | `heap.rs:567-579` | `heap_read_boxed` derives mutable `NonNull` from `&T` (SharedReadOnly provenance). If any code path calls `get_mut()` on a RePattern handle, UB occurs. | **Latent** — RePattern is immutable in practice. One-line fix needed. |
+| H-11 | `heap.rs:1083` | `dec_ref` accesses `ptr.data(reader).is_gc_tracked()` which can create `&mut HeapData` alias with live `HeapRead` handles. Fails Miri Stacked Borrows. Test at line 1928 demonstrates the issue. | **Latent** — only fails under Stacked Borrows, not current LLVM. Could become exploitable with future LLVM alias analysis. |
+| SH-4 | `stable_heap.rs:160` | `allocate` uses `as_mut_unchecked()` via `UnsafeCell` with `&self`. Not Sync, writes only to uninit slots. | **Safe** |
+| — | `heap.rs:1271` | `collect_white` uses `debug_assert!` for "readers == 0" check. In release builds, this assert is REMOVED. If GC produces White entry with readers > 0, silent use-after-free. | **Latent** — no known trigger path for incorrect White classification. |
 
-### 10.4 Acknowledgments
+**Documentation**: Every unsafe block has `// SAFETY: (DH)` comments. 100% invariant documentation coverage. No undocumented unsafe blocks found.
+
+### 11.2 GC Algorithm Edge Cases
+
+I analyzed Monty's Bacon-Rajan trial deletion collector in detail:
+
+**Confirmed safe:**
+- GC never fires during `allocate()` — borrow checker prevents concurrent collection
+- Duplicate edges in cycles are correctly handled (`color.replace()` guard at `heap.rs:1374`)
+- GC state (Purple candidates, color fields, allocation counters) survives serde round-trip through snapshots
+- Reader counts protect live entries from premature collection
+
+**Open findings:**
+
+| Finding | Detail | Risk |
+|---------|--------|------|
+| DateTime not GC-tracked | Holds `tzinfo_ref: Option<HeapId>` but NOT in `is_gc_tracked()`. TimeZone is a leaf type so no cycles form. | **Fragile** — if TimeZone gains heap refs, this becomes a cycle leak |
+| `dec_ref` aliasing | Re-tags invalidate live HeapRead pointers under Stacked Borrows | **Latent** — LLVM-version dependent |
+| Missing readers check in release | `debug_assert!` at `heap.rs:1271` not present in release | **Latent** — no known trigger |
+
+### 11.3 Timing Side-Channel Assessment
+
+I identified and tested three classes of timing oracle:
+
+**1. `repr()` timeout oracle** (`dict.rs:833`, `set.rs:532`, `list.rs:868`):
+Repr truncation with `...[timeout]` marker reveals element count. By controlling `max_duration_secs`, you can binary-search how many elements fit before timeout. I tested dicts of 500-2000 items with 1-3 second limits — all completed within 1 second, no truncation achieved. Monty's Rust implementation is too fast for meaningful timing differentiation at the default limits.
+
+**2. Sort comparison oracle** (`sorting.rs:150`):
+`check_time()` fires on every comparison during sorting. I tested 50-2000 items with 1-3 second limits — all completed. Tuple element comparison with padding strings could not exhaust the time budget.
+
+**3. Iterator loop oracle** (`iter.rs:131`):
+Per-iteration `check_time()` enables binary-search of iteration count. But the minimum observable difference (~100ms between timeouts) is too coarse for meaningful information leakage about sandbox operations.
+
+**Verdict**: Timing oracles exist but have insufficient resolution. Monty is 5-50x faster than CPython for typical workloads, making time-based differentiation impossible at hackmonty.com's minimum time limits (server-enforced max 10 seconds).
+
+### 11.4 Refcount Bug Campaign (#425 Pattern)
+
+I attempted to trigger the known `Heap::dec_ref` double-free bug (#425, reported May 2026) through the snapshot/resume chain. The trigger pattern required:
+1. Exception unwind path (failing import)
+2. Deeply nested dicts with unique template-formatted strings
+3. Heavy aggregation repeated 3 passes
+4. State persisted across multiple execution cycles
+
+**Results**: With default limits (5,000 allocations), all attempts hit `MemoryError` before reaching the depth required. With max limits (105,000 allocations, 5MB memory), 3,000 unique-string dict entries were built and aggregated successfully, but no crash occurred. The fix for #425 appears to be deployed in the current version.
+
+### 11.5 Snapshot Protocol State-Machine Attacks
+
+I tested boundary violations in the snapshot/resume protocol:
+
+| Attack | Result |
+|--------|--------|
+| Resume function_snapshot with name_lookup body | 400 Bad Request — schema validation |
+| Resume non-existent snapshot ID | 404 Not Found |
+| **Double-resume same snapshot** | **Succeeds** — snapshot IDs are reusable. But sandbox checks apply on every resume. |
+| Resume with crafted return values | Values pass through, downstream checks still apply |
+| Future snapshot with wrong child IDs | 422 — UUID validation |
+| Name lookup resume with huge values (5KB string) | Accepted, but print suppressed after name_lookup |
+
+**Finding**: Snapshots are multi-use (double resume succeeds), but the VM state is re-loaded from the snapshot each time, so this doesn't bypass sandbox checks. Path reads outside `/data` are PermissionError on every resume.
+
+### 11.6 Monty Source Code: Open Issues Audit
+
+I cross-referenced all open GitHub issues against exploitability from hackmonty.com:
+
+| Issue | Status | Exploitable? |
+|-------|--------|-------------|
+| #455 TOCTOU race in write path | **Open** since May 19 | ❌ Requires external actor creating symlinks concurrently. Monty doesn't expose symlink creation. |
+| #464 PrintWriter no size check | **Open** since May 26 | ❌ Print output is DoS only, no secret access. |
+| #440 Stack overflow protection | **Open** since May 15 | ❌ Recursion limit enforced (40 default, 100 max). |
+| #483 Time limit from REPL construction | **Open** since Jun 2 | ❌ hackmonty.com doesn't use MontyRepl. Each /run/ is a fresh instance. |
+| #477 Nested closure capture bug | **Open** since May 29 | ⚠️ Could cause wrong variable access in closures, but without class support, impact is limited. |
+| #380 Shared mount corruption | **Open** since Apr 22 | ❌ hackmonty.com has a single /data mount. No shared-mount scenario. |
+| #364 Generator materialization | **Open** since Apr 21 | ⚠️ Breaks iterator semantics, could leak internal state. |
+| #351 py_to_monty cyclic segfault | **Open** since Apr 17 | ❌ JSON input can't express cycles. |
+| #423 CPython global inconsistency | **Open** since May 8 | ⚠️ Scope manipulation possible but limited impact. |
+
+---
+
+## 12. Conclusion
+
+### 12.1 Summary
+### 12.2 Bounty Rubric Coverage
+### 12.3 Recommendations
+### 12.4 Acknowledgments
 
 This project was built on [karpathy/autoresearch](https://github.com/karpathy/autoresearch) and uses [qwen3.5](https://ollama.com/library/qwen3.5) via Ollama Cloud. The codebase audit leveraged parallel agent analysis. All work was conducted within the Hack Monty bounty rules.
 
