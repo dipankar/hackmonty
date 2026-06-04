@@ -1,19 +1,14 @@
-# Hack Monty 2 — Vulnerability Submission
+# Hack Monty 2 — Submission
 
-## Submitter
-- Name: Dipankar
-- GitHub: dipankar
-- Request secret (plaintext): cipher-zenith-quantum-drift-hm2026
+## Who
+Dipankar (GitHub: dipankar)
+Request secret: cipher-zenith-quantum-drift-hm2026
 
-## Category
-Partial Bounty — Vulnerability in Pydantic Monty that allows access to or control of the host
-(Unsafe Rust provenance violation — latent, not currently exploitable from sandboxed Python)
+## What I found
 
-## Finding: `heap_read_boxed` Unsafe Provenance Mismatch
+A latent unsafe Rust bug in monty's heap layer. It's not a sandbox escape — I couldn't read the secret. But it's a real provenance violation in unsafe code that the Miri author would flag immediately.
 
-**Location**: `crates/monty/src/heap.rs`, lines 567-579
-
-**Function**: `heap_read_boxed()`
+**The bug**: `heap_read_boxed()` at `crates/monty/src/heap.rs:567-579`.
 
 ```rust
 fn heap_read_boxed<'a, T>(boxed: &Box<T>, readers: NonNull<Cell<usize>>) -> HeapRead<'a, T> {
@@ -25,19 +20,13 @@ fn heap_read_boxed<'a, T>(boxed: &Box<T>, readers: NonNull<Cell<usize>>) -> Heap
 }
 ```
 
-**The bug**: The `NonNull` pointer is derived from `ptr::from_ref(boxed.as_ref()).cast_mut()`. The call chain is:
-1. `boxed` — `&Box<T>` (shared reference to the Box)
-2. `boxed.as_ref()` — produces `&T` with **SharedReadOnly** provenance under Stacked Borrows / Tree Borrows
-3. `ptr::from_ref(...)` — `*const T` inheriting SharedReadOnly
-4. `.cast_mut()` — `*mut T` but provenance is still SharedReadOnly
-5. If `HeapRead::get_mut()` ever dereferences this as `&mut T`, it creates a mutable reference from SharedReadOnly provenance — **undefined behavior**
+The problem is on line 576. `ptr::from_ref(boxed.as_ref()).cast_mut()` takes a `&T` reference (which has SharedReadOnly provenance under Stacked Borrows), gets a raw pointer from it (still SharedReadOnly), then casts to `*mut T`. The provenance doesn't change — you now have a `*mut T` that you're not allowed to write through. If `HeapRead::get_mut()` ever dereferences it, that's UB.
 
-**Current status**: This bug is latent. RePattern (the only type using this code path) is effectively immutable — no code calls `get_mut()` on a RePattern handle. But if any future code adds mutation through this path, UB would be triggered.
+Right now this is safe because RePattern (the only type using `heap_read_boxed`) is never mutated. No code path calls `get_mut()` on a RePattern handle. So it's a ticking time bomb rather than a live vulnerability.
 
-**Contrast with the correct pattern**: The sibling function `heap_read()` (line 553) correctly derives the pointer from `base` (the `*mut HeapData` from `UnsafeCell::get`, which has SharedReadWrite provenance). The `heap_read_boxed` function can't use this approach because Box-allocated data lives in a separate allocation from HeapData.
+Compare with `heap_read()` at line 553 — that one does it right: derives from the `base` pointer that came from `UnsafeCell::get` (SharedReadWrite provenance). `heap_read_boxed` can't use that approach because Box-allocated data is in a separate allocation, but it could derive from the Box pointer itself.
 
-**Fix suggestion**: Derive the pointer from the Box's original allocation rather than from `&T`:
-
+**The fix**:
 ```rust
 fn heap_read_boxed<'a, T>(boxed: &Box<T>, readers: NonNull<Cell<usize>>) -> HeapRead<'a, T> {
     HeapRead {
@@ -48,29 +37,17 @@ fn heap_read_boxed<'a, T>(boxed: &Box<T>, readers: NonNull<Cell<usize>>) -> Heap
 }
 ```
 
-`Box::as_ptr` returns a pointer derived from the Box's original allocation (Unique provenance), and `.cast_mut()` preserves that provenance. However, since `Box::as_ptr` takes `&self`, the full provenance chain through the reference is still a concern. A more robust fix would store the original pointer at construction time or use `ptr::addr_of!` to avoid going through the reference.
+`Box::as_ptr` returns a pointer from the Box's allocation (Unique provenance), so `as *mut T` preserves write capability. Though honestly `Box::as_ptr` takes `&self` too, so the full provenance chain is still fuzzy. A really clean fix might store the original pointer at construction time.
 
-## Additional Finding: `dec_ref` Stacked Borrows Violation
+## Also worth noting
 
-**Location**: `heap.rs`, line 1083
+The `dec_ref` function at `heap.rs:1083` has a documented Miri failure (test `dec_ref_must_not_invalidate_live_heap_read` at line 1928). It accesses `ptr.data(reader).is_gc_tracked()` which goes through `UnsafeCell`, and under Stacked Borrows the retag can invalidate existing `HeapRead` raw pointers. The test shows it currently passes by using `UnsafeCell::get` instead of `get_mut`, but the free path at line 1110 still uses `get_mut` — correctly guarded by the `readers == 0` check at line 1095. If that assertion is ever wrong, it's a use-after-free. Might be worth putting this in CI with Miri.
 
-In `dec_ref`, the code accesses `ptr.data(reader).is_gc_tracked()` which internally calls `entry.data.0.get()` — an `UnsafeCell::get_mut()` retag. In earlier versions, this created a `&mut HeapData` alias while live `HeapRead` handles held `SharedReadWrite` pointers, violating Stacked Borrows. 
+## What I actually did
 
-The test at line 1928 (`dec_ref_must_not_invalidate_live_heap_read`) documents this prior aliasing violation. The current code appears to use `ptr.data(reader)` which returns `&HeapData` (shared) via `UnsafeCell::get`, preserving SharedReadWrite permission. However, on the free path at line 1110, `value.data.0.get_mut()` still creates `&mut HeapData` — correctly guarded by the `readers == 0` assertion at line 1095.
+I built an LLM-driven autonomous probing loop based on the autoresearch pattern, ran 200+ exploit attempts against hackmonty.com, did a full source audit of the monty codebase (all 43 unsafe blocks, the GC algorithm, the filesystem sandbox, the snapshot protocol), and tested every class of attack I could think of. The sandbox held up. This provenance bug was the most interesting thing I found in the Rust source.
 
-This should be monitored with Miri in CI. A regression would turn this into an active use-after-free.
-
-## Reproduction Evidence
-
-We conducted:
-- Exhaustive unsafe audit of all 43 unsafe blocks across 100+ Rust source files
-- Full codebase review of heap.rs, heap_data.rs, heap_traits.rs, sorting.rs, and all builtins
-- 200+ Python-level exploit attempts against the live hackmonty.com honeypot
-- Timing side-channel analysis, GC edge case analysis, snapshot protocol fuzzing
-
-Full report and tooling: https://github.com/dipankar/hackmonty
+Full code, attempt logs, and detailed report at: https://github.com/dipankar/hackmonty
 
 ## Secret
-Not found. This is a source-code vulnerability, not a sandbox escape.
-
-The honepot remains unbroken by our methods — a testament to the Round 2 hardening.
+Not found. Honestly, the Round 2 hardening is solid.
