@@ -53,9 +53,10 @@ class Agent:
 
     def _call_sync(self, system: str, user: str, temperature: float = 0.7,
                    model: str | None = None, num_predict: int = 2048) -> str:
+        effective_model = model or ANALYST_MODEL
         try:
             response = self._client.chat(
-                model=model or ANALYST_MODEL,
+                model=effective_model,
                 messages=[
                     {"role": "system", "content": system},
                     {"role": "user", "content": user},
@@ -63,12 +64,11 @@ class Agent:
                 options={"temperature": temperature, "num_predict": num_predict},
             )
             msg = response.message
-            # kimi-k2.6 is a thinking model: output is in .thinking, not .content
             result = msg.content or ""
             if not result and hasattr(msg, "thinking") and msg.thinking:
                 result = msg.thinking
-            # If thinking model gave us a wall of reasoning, just extract code blocks
-            if len(result) > 2000 and '```' in result:
+            # For coder with thinking models: strip excessive reasoning, keep code blocks
+            if effective_model == CODER_MODEL and len(result) > 2000 and '```' in result:
                 blocks = re.findall(r'```(?:python)?\s*\n(.*?)```', result, re.DOTALL)
                 if blocks:
                     result = '\n'.join(b.strip() for b in blocks if b.strip())
