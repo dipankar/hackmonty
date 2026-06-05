@@ -52,7 +52,7 @@ class Agent:
         )
 
     def _call_sync(self, system: str, user: str, temperature: float = 0.7,
-                   model: str | None = None) -> str:
+                   model: str | None = None, num_predict: int = 2048) -> str:
         try:
             response = self._client.chat(
                 model=model or ANALYST_MODEL,
@@ -60,15 +60,26 @@ class Agent:
                     {"role": "system", "content": system},
                     {"role": "user", "content": user},
                 ],
-                options={"temperature": temperature, "num_predict": 2048},
+                options={"temperature": temperature, "num_predict": num_predict},
             )
-            return response.message.content
+            msg = response.message
+            # kimi-k2.6 is a thinking model: output is in .thinking, not .content
+            result = msg.content or ""
+            if not result and hasattr(msg, "thinking") and msg.thinking:
+                result = msg.thinking
+            # If thinking model gave us a wall of reasoning, just extract code blocks
+            if len(result) > 2000 and '```' in result:
+                blocks = re.findall(r'```(?:python)?\s*\n(.*?)```', result, re.DOTALL)
+                if blocks:
+                    result = '\n'.join(b.strip() for b in blocks if b.strip())
+            return result
         except Exception as e:
             return f"API_ERROR: {e}"
 
     async def _call(self, system: str, user: str, temperature: float = 0.7,
-                    model: str | None = None) -> str:
-        return await asyncio.to_thread(self._call_sync, system, user, temperature, model)
+                    model: str | None = None, num_predict: int = 2048) -> str:
+        return await asyncio.to_thread(self._call_sync, system, user, temperature,
+                                       model, num_predict)
 
     async def analyst(self, system_prompt: str, history: str) -> AgentResponse:
         user = f"""## Recent Attempt History
@@ -104,12 +115,12 @@ STRATEGY: [precise 3-sentence exploitation plan]"""
         user = f"""## Selected Template: {template}
 ## Strategy: {strategy}
 
-Generate Python exploit code. Output ONLY a ```python block.
-Under 80 lines. Focus on the SPECIFIC vulnerability pattern.
-Do NOT use: class, del, yield, os.listdir, __builtins__, dir().
-Do NOT just probe paths — use the template's precise attack vector."""
+Generate Python exploit code. Output ONLY a ```python block. No thinking, no reasoning, just the code block.
+Under 80 lines. Do NOT use: class, del, yield, os.listdir, __builtins__, dir().
+Focus on the SPECIFIC vulnerability pattern."""
 
-        raw = await self._call(system_prompt, user, temperature=0.8, model=CODER_MODEL)
+        raw = await self._call(system_prompt, user, temperature=0.3, model=CODER_MODEL,
+                               num_predict=1024)
 
         resp = AgentResponse()
         resp.raw_response = raw
