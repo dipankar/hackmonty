@@ -67,8 +67,8 @@ class Agent:
             result = msg.content or ""
             if not result and hasattr(msg, "thinking") and msg.thinking:
                 result = msg.thinking
-            # For coder with thinking models: strip excessive reasoning, keep code blocks
-            if effective_model == CODER_MODEL and len(result) > 2000 and '```' in result:
+            # For coder: strip excessive reasoning, keep only code blocks
+            if effective_model == CODER_MODEL and len(result) > 500 and '```' in result:
                 blocks = re.findall(r'```(?:python)?\s*\n(.*?)```', result, re.DOTALL)
                 if blocks:
                     result = '\n'.join(b.strip() for b in blocks if b.strip())
@@ -115,12 +115,12 @@ STRATEGY: [precise 3-sentence exploitation plan]"""
         user = f"""## Selected Template: {template}
 ## Strategy: {strategy}
 
-Generate Python exploit code. Output ONLY a ```python block. No thinking, no reasoning, just the code block.
-Under 80 lines. Do NOT use: class, del, yield, os.listdir, __builtins__, dir().
-Focus on the SPECIFIC vulnerability pattern."""
+Generate ONLY Python code inside triple backticks. No thinking. No reasoning. No explanation.
+Output format: exactly one ```python block with the exploit code.
+Under 80 lines. Do NOT use: class, del, yield, os.listdir, __builtins__, dir()."""
 
         raw = await self._call(system_prompt, user, temperature=0.3, model=CODER_MODEL,
-                               num_predict=1024)
+                               num_predict=512)
 
         resp = AgentResponse()
         resp.raw_response = raw
@@ -153,20 +153,37 @@ Focus on the SPECIFIC vulnerability pattern."""
 
 
 def _extract_code(raw: str) -> str:
-    match = re.search(r"```(?:python)?\s*\n(.*?)```", raw, re.DOTALL)
-    if match:
-        return match.group(1).strip()
-    lines = []
-    in_code = False
-    for line in raw.split("\n"):
+    # Strategy 1: Markdown code blocks
+    blocks = re.findall(r"```(?:python)?\s*\n(.*?)```", raw, re.DOTALL)
+    if blocks:
+        return '\n'.join(b.strip() for b in blocks if len(b.strip()) > 10)
+
+    # Strategy 2: The model output thinking but code is inline without backticks.
+    # Find the longest contiguous block of Python-looking lines.
+    code_lines = []
+    best_block = []
+    for line in raw.split('\n'):
         s = line.strip()
-        if s.startswith(("import ", "from ", "def ", "try:", "print(", "async ", "await ")):
-            in_code = True
-        elif s.startswith("```"):
-            continue
-        if in_code and s:
-            lines.append(line)
-    return "\n".join(lines).strip() if lines else raw.strip()
+        is_code = s and (
+            s.startswith(('import ', 'from ', 'def ', 'try:', 'print(', 'async ', 'await ',
+                          'for ', 'while ', 'if ', 'with ', 'result ', 'data ', 'path ',
+                          'x =', 'd =', 's =', 'f =', 'p =', 'r ='))
+            or re.match(r'^\s*[a-zA-Z_]\w*\s*=\s*', s)
+            or re.match(r'^\s*[a-zA-Z_]\w*\.', s)
+        )
+        if is_code:
+            code_lines.append(line)
+        else:
+            if len(code_lines) > len(best_block):
+                best_block = code_lines
+            code_lines = []
+    if len(code_lines) > len(best_block):
+        best_block = code_lines
+    if best_block and len('\n'.join(best_block)) > 30:
+        return '\n'.join(best_block).strip()
+
+    # Strategy 3: The entire raw output, stripped of obvious non-code
+    return raw.strip()
 
 
 def _extract_field(raw: str, field: str) -> str:
