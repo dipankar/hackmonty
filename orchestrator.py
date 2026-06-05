@@ -311,7 +311,8 @@ async def main():
             print(f"  [WARN] Issue fetch failed: {e}")
 
     print(f"\nV3 Swarm: {args.max_iterations} iterations, {args.workers} workers")
-    print(f"Model: minimax-m3:cloud | Templates: {' '.join(t[0] for t in TEMPLATES)}")
+    print(f"Analyst: minimax-m3:cloud | Coder: kimi-k2.6:cloud")
+    print(f"Templates: {' '.join(t[0] for t in TEMPLATES)}")
     print(f"Mode: bandit→analyst→coder→run→eval→revalidate")
     print("Press Ctrl+C to stop.\n")
 

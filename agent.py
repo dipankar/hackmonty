@@ -1,7 +1,11 @@
-"""LLM agent driver — async with minimax-m3:cloud via Ollama Cloud API.
+"""LLM agent driver — async with Ollama Cloud API.
 
 Supports analyst (strategy), coder (exploit generation), and meta_review roles.
 All Ollama calls are wrapped in asyncio.to_thread for non-blocking concurrency.
+
+Models:
+  ANALYST_MODEL = "minimax-m3:cloud"     — strategy & meta-review (reasoning)
+  CODER_MODEL   = "kimi-k2.6:cloud"     — exploit code generation
 """
 
 from __future__ import annotations
@@ -16,7 +20,8 @@ from typing import Any
 
 
 OLLAMA_HOST = "https://ollama.com"
-MODEL = "minimax-m3:cloud"
+ANALYST_MODEL = "minimax-m3:cloud"
+CODER_MODEL   = "kimi-k2.6:cloud"
 
 
 @dataclass
@@ -46,10 +51,11 @@ class Agent:
             headers={"Authorization": f"Bearer {self.api_key}"},
         )
 
-    def _call_sync(self, system: str, user: str, temperature: float = 0.7) -> str:
+    def _call_sync(self, system: str, user: str, temperature: float = 0.7,
+                   model: str | None = None) -> str:
         try:
             response = self._client.chat(
-                model=MODEL,
+                model=model or ANALYST_MODEL,
                 messages=[
                     {"role": "system", "content": system},
                     {"role": "user", "content": user},
@@ -60,8 +66,9 @@ class Agent:
         except Exception as e:
             return f"API_ERROR: {e}"
 
-    async def _call(self, system: str, user: str, temperature: float = 0.7) -> str:
-        return await asyncio.to_thread(self._call_sync, system, user, temperature)
+    async def _call(self, system: str, user: str, temperature: float = 0.7,
+                    model: str | None = None) -> str:
+        return await asyncio.to_thread(self._call_sync, system, user, temperature, model)
 
     async def analyst(self, system_prompt: str, history: str) -> AgentResponse:
         user = f"""## Recent Attempt History
@@ -102,7 +109,7 @@ Under 80 lines. Focus on the SPECIFIC vulnerability pattern.
 Do NOT use: class, del, yield, os.listdir, __builtins__, dir().
 Do NOT just probe paths — use the template's precise attack vector."""
 
-        raw = await self._call(system_prompt, user, temperature=0.8)
+        raw = await self._call(system_prompt, user, temperature=0.8, model=CODER_MODEL)
 
         resp = AgentResponse()
         resp.raw_response = raw
