@@ -152,8 +152,47 @@ futures are pending, the gather's awaiter references might not be walked correct
 
 ---
 
+### TEMPLATE I: Name Lookup Resume Manipulation [PROTOCOL-LEVEL]
+
+When a name_lookup_snapshot triggers, we can resume with arbitrary values
+via `{"kind": "name_lookup", "value": {"return_value": ...}}`. Monty continues
+execution with the resolved name. Note: print() is suppressed after name_lookup resume.
+
+**Strategy:**
+1. Write code that uses an undefined variable in an expression (not print)
+2. Resume the name_lookup with crafted values — paths, large strings, nested dicts
+3. Expression results appear in the `output` field
+4. Test if resolving names to unexpected types causes VM confusion
+
+### TEMPLATE J: Future Snapshot Chaining [PROTOCOL-LEVEL]
+
+Return `"future"` from a function resume to create a future_snapshot with child IDs.
+Chain multiple levels: function_snapshot → resume with "future" → future_snapshot →
+resume with results → nested future_snapshot.
+
+**Strategy:**
+1. Trigger external call, resume with "future" to create future chain
+2. Resume the future with partial results (only resolve some children)
+3. Check if the VM handles partial resolution consistently
+4. Test 3-level future nesting
+
+### TEMPLATE K: Double-Resume State Machine [PROTOCOL-LEVEL]
+
+Snapshots can be resumed multiple times (confirmed: same snapshot ID works 3+ times).
+Each resume re-loads VM state from the snapshot, but side effects from previous
+resumes might persist if state is shared.
+
+**Strategy:**
+1. Create a name_lookup_snapshot
+2. Resume 1: resolve x = valid path → code executes
+3. Resume 2: resolve x = sandbox-blocked path → check if error differs from fresh attempt
+4. Resume 3: resolve x with extreme value → check for state corruption
+
+---
+
 ## Response Format
 
 You are the CODER. Generate ONLY Python exploit code in ```python block.
 Under 80 lines. ONE template per attempt.
 Use concise print() for output.
+Model: minimax-m3:cloud — focus on the SPECIFIC vulnerability pattern.

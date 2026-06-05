@@ -236,3 +236,138 @@ def format_result(result: RunResult) -> str:
             lines.append(f"Print: {str(print_output)[:500]}")
 
     return "\n".join(lines)
+
+
+# ── Async Client ──────────────────────────────────────────────────
+
+import asyncio
+import httpx as httpx_async
+
+
+class AsyncHackMontyClient:
+    """Async API client using httpx.AsyncClient for parallel workers."""
+
+    BASE = "https://hackmonty.com"
+    MAX_RESUMES = 200
+
+    def __init__(self, user_secret: str | None = None, concurrency: int = 4):
+        self.client = httpx_async.AsyncClient(
+            timeout=30.0,
+            limits=httpx_async.Limits(
+                max_connections=concurrency * 3,
+                max_keepalive_connections=concurrency * 2,
+            ),
+        )
+        self.headers: dict[str, str] = {"content-type": "application/json"}
+        if user_secret:
+            import hashlib
+            user_hash = hashlib.sha256(user_secret.encode()).hexdigest()
+            self.headers["User"] = user_hash
+
+    async def run_code(self, code: str) -> RunResult:
+        result = RunResult(success=False, raw_response={}, error=None)
+        import time as _time
+        start_time = _time.monotonic()
+
+        try:
+            resp = await self.client.post(
+                f"{self.BASE}/run/", headers=self.headers, json={"code": code}
+            )
+            resp.raise_for_status()
+            body = resp.json()
+        except Exception as e:
+            result.error = str(e)
+            result.elapsed_ms = (_time.monotonic() - start_time) * 1000
+            return result
+
+        result.raw_response = body
+        kind = body.get("kind", "")
+        snapshot_id = body.get("snapshot_id") or body.get("id", "")
+
+        if kind in ("completed", "complete"):
+            result.success = True
+            result.raw_response["output"] = body.get("output")
+            result.raw_response["print_output"] = body.get("print_output", "")
+            result.elapsed_ms = (_time.monotonic() - start_time) * 1000
+            return result
+
+        if kind in ("runtime_error", "syntax_error", "typing_error"):
+            result.error = body.get("error", f"Monty {kind}")
+            result.elapsed_ms = (_time.monotonic() - start_time) * 1000
+            return result
+
+        if not snapshot_id:
+            result.error = f"No snapshot ID for kind '{kind}'"
+            result.elapsed_ms = (_time.monotonic() - start_time) * 1000
+            return result
+
+        resumes = 0
+        while kind not in ("completed", "complete", "runtime_error", "syntax_error", "typing_error") and resumes < self.MAX_RESUMES:
+            snap = SnapshotResult(
+                snapshot_id=snapshot_id,
+                kind=kind,
+                data=body,
+            )
+            if kind == "function_snapshot":
+                snap.final_output = {
+                    "function_name": body.get("function_name", ""),
+                    "args": body.get("args", []),
+                    "kwargs": body.get("kwargs", {}),
+                }
+            elif kind == "name_lookup_snapshot":
+                snap.final_output = {"name": body.get("name", "")}
+            elif kind == "monty_error":
+                snap.monty_error = body.get("message", "")
+            elif kind == "monty_traceback":
+                snap.traceback = body.get("traceback", "")
+
+            if "print_output" in body:
+                snap.stdout += body.get("print_output", "")
+
+            if kind == "function_snapshot":
+                resume_body = {"kind": "function", "result": {"return_value": None}}
+            elif kind == "name_lookup_snapshot":
+                resume_body = {"kind": "name_lookup", "value": None}
+            elif kind == "future_snapshot":
+                pending = body.get("pending_snapshot_ids", [])
+                resume_body = {"kind": "future", "results": {p: {"return_value": None} for p in pending}}
+            else:
+                resume_body = {"kind": kind}
+
+            try:
+                resp = await self.client.post(
+                    f"{self.BASE}/run/{snapshot_id}/",
+                    headers=self.headers,
+                    json=resume_body,
+                )
+                resp.raise_for_status()
+                body = resp.json()
+            except Exception as e:
+                snap.error = str(e)
+                result.snapshots.append(snap)
+                result.error = f"Resume failed at snapshot {resumes}: {e}"
+                result.total_resumes = resumes
+                result.elapsed_ms = (_time.monotonic() - start_time) * 1000
+                return result
+
+            kind = body.get("kind", "")
+            snapshot_id = body.get("snapshot_id") or body.get("id", "")
+            if "print_output" in body:
+                snap.stdout += body.get("print_output", "")
+            result.snapshots.append(snap)
+            resumes += 1
+
+        result.total_resumes = resumes
+        if kind in ("completed", "complete"):
+            result.success = True
+            result.raw_response = body
+        elif kind in ("runtime_error", "syntax_error", "typing_error"):
+            result.error = body.get("error", f"Monty {kind}")
+        else:
+            result.error = f"Max resumes ({self.MAX_RESUMES}) exceeded"
+        result.elapsed_ms = (_time.monotonic() - start_time) * 1000
+        return result
+
+    async def close(self):
+        await self.client.aclose()
+

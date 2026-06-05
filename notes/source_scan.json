@@ -1,0 +1,2076 @@
+{
+  "unsafe_blocks": [
+    {
+      "file": "heap.rs",
+      "count": 22,
+      "locations": [
+        [
+          143,
+          "block",
+          "let slot = unsafe { self.heap.entries.slot_at(id) }.expect(\"HeapReader::read_ptr"
+        ],
+        [
+          267,
+          "block",
+          "let cell = unsafe { self.readers.as_ref() };"
+        ],
+        [
+          289,
+          "block",
+          "unsafe { self.value.as_ref() }"
+        ],
+        [
+          295,
+          "block",
+          "unsafe { self.value.as_mut() }"
+        ],
+        [
+          304,
+          "fn",
+          "unsafe fn cast_as_member_ref<U>(&self, offset: usize) -> BorrowedHeapRead<'_, 'a, U> {"
+        ],
+        [
+          309,
+          "block",
+          "value: unsafe { self.value.byte_add(offset) }.cast(),"
+        ],
+        [
+          325,
+          "fn",
+          "unsafe fn cast_as_member_ref_mut<U>(&mut self, offset: usize) -> BorrowedHeapReadMut<'_, 'a, U> {"
+        ],
+        [
+          330,
+          "block",
+          "value: unsafe { self.value.byte_add(offset) }.cast(),"
+        ],
+        [
+          390,
+          "block",
+          "unsafe { heap_read.cast_as_member_ref(offset) }"
+        ],
+        [
+          403,
+          "block",
+          "unsafe { $crate::heap::cast_as_member_ref_type_hinted($heap_read, offset, type_h"
+        ]
+      ]
+    },
+    {
+      "file": "heap_traits.rs",
+      "count": 3,
+      "locations": [
+        [
+          199,
+          "block",
+          "unsafe { ManuallyDrop::take(&mut this.value) }"
+        ],
+        [
+          228,
+          "block",
+          "unsafe { (ManuallyDrop::take(&mut this.value), addr_of!(this.heap).read()) }"
+        ],
+        [
+          241,
+          "block",
+          "unsafe { ManuallyDrop::take(&mut self.value) }.drop_with_heap(self.heap.heap_mut"
+        ]
+      ]
+    },
+    {
+      "file": "heap/stable_heap.rs",
+      "count": 15,
+      "locations": [
+        [
+          66,
+          "block",
+          ".entries(unsafe { HeapEntriesIter::new(self) })"
+        ],
+        [
+          101,
+          "block",
+          "let slot = unsafe { self.slot_at(id) };"
+        ],
+        [
+          127,
+          "block",
+          "let value = unsafe { slot.assume_init_mut() };"
+        ],
+        [
+          160,
+          "block",
+          "let pages = unsafe { self.pages.get().as_mut_unchecked() };"
+        ],
+        [
+          166,
+          "block",
+          "unsafe { slot.assume_init_ref() }.is_none(),"
+        ],
+        [
+          194,
+          "block",
+          "unsafe { HeapEntriesIter::new(self) }.filter_map(|(idx, slot)| slot.map(|s| (Hea"
+        ],
+        [
+          213,
+          "block",
+          "let pages = unsafe { self.pages.get().as_ref_unchecked() };"
+        ],
+        [
+          216,
+          "block",
+          "Some(unsafe { slot.assume_init_ref() })"
+        ],
+        [
+          231,
+          "block",
+          "unsafe { Box::from_raw(raw) }"
+        ],
+        [
+          256,
+          "block",
+          "unsafe { self.value.take().unwrap_unchecked() }"
+        ]
+      ]
+    },
+    {
+      "file": "heap/free_list.rs",
+      "count": 1,
+      "locations": [
+        [
+          26,
+          "block",
+          "unsafe { (*self.ids.get()).pop() }"
+        ]
+      ]
+    }
+  ],
+  "pyfunctions": [],
+  "extern_c": [],
+  "callback_points": {
+    "run.rs": [
+      {
+        "line": 366,
+        "signature": "pub(crate) fn run_to_completion<'h>(&'h self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<MontyObject> {"
+      }
+    ],
+    "repl.rs": [
+      {
+        "line": 1067,
+        "signature": "fn convert_args(args: Vec<MontyObject>, vm: &mut VM<'_, impl ResourceTracker>) -> Result<ArgValues, MontyException> {"
+      }
+    ],
+    "exception_private.rs": [
+      {
+        "line": 203,
+        "signature": "pub(crate) fn call(self, vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 343,
+        "signature": "pub(crate) fn key_error(key: &Value, vm: &mut VM<'_, impl ResourceTracker>) -> RunError {"
+      },
+      {
+        "line": 1660,
+        "signature": "pub fn py_getattr(&self, attr: &EitherStr, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<CallResult>> {"
+      }
+    ],
+    "sorting.rs": [
+      {
+        "line": 43,
+        "signature": "pub fn parse_and_sort(items: &mut [Value], args: ArgValues, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<()> {"
+      }
+    ],
+    "run_progress.rs": [
+      {
+        "line": 697,
+        "signature": "pub(crate) fn convert_frame_exit(result: RunResult<FrameExit>, vm: &mut VM<'_, impl ResourceTracker>) -> ConvertedExit {"
+      }
+    ],
+    "value.rs": [
+      {
+        "line": 156,
+        "signature": "fn py_eq(&self, other: &Self, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 240,
+        "signature": "fn py_cmp(&self, other: &Self, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Option<Ordering>> {"
+      },
+      {
+        "line": 295,
+        "signature": "fn py_bool(&self, vm: &mut VM<'_, impl ResourceTracker>) -> bool {"
+      },
+      {
+        "line": 374,
+        "signature": "fn py_str(&self, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Cow<'static, str>> {"
+      },
+      {
+        "line": 382,
+        "signature": "fn py_add(&self, other: &Self, vm: &mut VM<'_, impl ResourceTracker>) -> Result<Option<Value>, ResourceError> {"
+      },
+      {
+        "line": 451,
+        "signature": "fn py_sub(&self, other: &Self, vm: &mut VM<'_, impl ResourceTracker>) -> Result<Option<Self>, ResourceError> {"
+      },
+      {
+        "line": 488,
+        "signature": "fn py_mod(&self, other: &Self, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Option<Self>> {"
+      },
+      {
+        "line": 633,
+        "signature": "fn py_mult(&self, other: &Self, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Option<Value>> {"
+      },
+      {
+        "line": 839,
+        "signature": "fn py_div(&self, other: &Self, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Option<Value>> {"
+      },
+      {
+        "line": 997,
+        "signature": "fn py_floordiv(&self, other: &Self, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Option<Value>> {"
+      },
+      {
+        "line": 1126,
+        "signature": "fn py_pow(&self, other: &Self, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Option<Value>> {"
+      },
+      {
+        "line": 1334,
+        "signature": "fn py_getitem(&self, key: &Self, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Self> {"
+      },
+      {
+        "line": 1385,
+        "signature": "fn py_setitem(&mut self, key: Self, value: Self, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<()> {"
+      },
+      {
+        "line": 1507,
+        "signature": "pub fn module_name(&self, vm: &mut VM<'_, impl ResourceTracker>) -> String {"
+      },
+      {
+        "line": 1533,
+        "signature": "pub fn py_hash(&self, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Option<HashValue>> {"
+      },
+      {
+        "line": 1589,
+        "signature": "pub fn py_contains(&self, item: &Self, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 1730,
+        "signature": "pub fn py_getattr(&self, attr: &EitherStr, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<CallResult> {"
+      },
+      {
+        "line": 1764,
+        "signature": "pub fn py_set_attr(&self, name: &EitherStr, value: Self, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<()> {"
+      }
+    ],
+    "heap_data.rs": [
+      {
+        "line": 467,
+        "signature": "fn py_bool(&self, vm: &mut VM<'h, impl ResourceTracker>) -> bool {"
+      },
+      {
+        "line": 555,
+        "signature": "fn py_enter(&mut self, self_id: HeapId, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<CallResult> {"
+      },
+      {
+        "line": 640,
+        "signature": "fn py_eq(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 737,
+        "signature": "fn py_hash(&self, self_id: HeapId, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<HashValue>> {"
+      },
+      {
+        "line": 843,
+        "signature": "fn py_str(&self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Cow<'static, str>> {"
+      },
+      {
+        "line": 962,
+        "signature": "fn py_mod(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<Value>> {"
+      },
+      {
+        "line": 988,
+        "signature": "fn py_getitem(&self, key: &Value, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 1002,
+        "signature": "fn py_setitem(&mut self, key: Value, value: Value, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<()> {"
+      },
+      {
+        "line": 1014,
+        "signature": "fn py_getattr(&self, attr: &EitherStr, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<CallResult>> {"
+      }
+    ],
+    "object.rs": [
+      {
+        "line": 358,
+        "signature": "pub(crate) fn new(value: Value, vm: &mut VM<'_, impl ResourceTracker>) -> Self {"
+      },
+      {
+        "line": 378,
+        "signature": "pub(crate) fn to_value(self, vm: &mut VM<'_, impl ResourceTracker>) -> Result<Value, InvalidInputError> {"
+      },
+      {
+        "line": 545,
+        "signature": "fn from_value(object: &Value, vm: &mut VM<'_, impl ResourceTracker>) -> Self {"
+      },
+      {
+        "line": 560,
+        "signature": "fn from_value_inner(object: &Value, vm: &mut VM<'_, impl ResourceTracker>, visited: &mut AHashSet<HeapId>) -> Self {"
+      },
+      {
+        "line": 843,
+        "signature": "fn repr_or_error(value: &Value, vm: &mut VM<'_, impl ResourceTracker>) -> MontyObject {"
+      }
+    ],
+    "types/str.rs": [
+      {
+        "line": 66,
+        "signature": "pub fn init(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 196,
+        "signature": "fn py_getitem(&self, key: &Value, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 213,
+        "signature": "fn py_eq(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 217,
+        "signature": "fn py_hash(&self, _self_id: HeapId, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<HashValue>> {"
+      },
+      {
+        "line": 230,
+        "signature": "fn py_bool(&self, vm: &mut VM<'h, impl ResourceTracker>) -> bool {"
+      },
+      {
+        "line": 234,
+        "signature": "fn py_cmp(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<Ordering>> {"
+      },
+      {
+        "line": 247,
+        "signature": "fn py_str(&self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Cow<'static, str>> {"
+      },
+      {
+        "line": 251,
+        "signature": "fn py_add(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> Result<Option<Value>, ResourceError> {"
+      },
+      {
+        "line": 889,
+        "signature": "fn str_find<'h>(s: &HeapRead<'h, str>, args: ArgValues, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 909,
+        "signature": "fn str_rfind<'h>(s: &HeapRead<'h, str>, args: ArgValues, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 928,
+        "signature": "fn str_index<'h>(s: &HeapRead<'h, str>, args: ArgValues, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 946,
+        "signature": "fn str_rindex<'h>(s: &HeapRead<'h, str>, args: ArgValues, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 965,
+        "signature": "fn str_count<'h>(s: &HeapRead<'h, str>, args: ArgValues, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 1001,
+        "signature": "fn str_endswith<'h>(s: &HeapRead<'h, str>, args: ArgValues, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 1079,
+        "signature": "fn extract_str_or_tuple_of_str(value: &Value, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Vec<String>> {"
+      },
+      {
+        "line": 1113,
+        "signature": "fn extract_string_arg(value: &Value, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<String> {"
+      },
+      {
+        "line": 1128,
+        "signature": "fn extract_int_arg(value: &Value, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<i64> {"
+      },
+      {
+        "line": 1190,
+        "signature": "fn str_strip<'h>(s: &HeapRead<'h, str>, args: ArgValues, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 1203,
+        "signature": "fn str_lstrip<'h>(s: &HeapRead<'h, str>, args: ArgValues, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 1216,
+        "signature": "fn str_rstrip<'h>(s: &HeapRead<'h, str>, args: ArgValues, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 1229,
+        "signature": "fn parse_strip_arg(method: &str, args: ArgValues, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Option<String>> {"
+      },
+      {
+        "line": 1285,
+        "signature": "fn str_split<'h>(s: &HeapRead<'h, str>, args: ArgValues, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 1332,
+        "signature": "fn str_rsplit<'h>(s: &HeapRead<'h, str>, args: ArgValues, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 1529,
+        "signature": "fn parse_splitlines_args(args: ArgValues, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 1630,
+        "signature": "fn str_replace<'h>(s: &HeapRead<'h, str>, args: ArgValues, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 1688,
+        "signature": "fn str_center<'h>(s: &HeapRead<'h, str>, args: ArgValues, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 1718,
+        "signature": "fn str_ljust<'h>(s: &HeapRead<'h, str>, args: ArgValues, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 1740,
+        "signature": "fn str_rjust<'h>(s: &HeapRead<'h, str>, args: ArgValues, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 1800,
+        "signature": "fn str_zfill<'h>(s: &HeapRead<'h, str>, args: ArgValues, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 1912,
+        "signature": "fn str_encode<'h>(s: &HeapRead<'h, str>, args: ArgValues, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      }
+    ],
+    "types/timedelta.rs": [
+      {
+        "line": 182,
+        "signature": "pub(crate) fn init(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 286,
+        "signature": "fn py_eq(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 290,
+        "signature": "fn py_hash(&self, _self_id: HeapId, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<HashValue>> {"
+      },
+      {
+        "line": 296,
+        "signature": "fn py_cmp(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<Ordering>> {"
+      },
+      {
+        "line": 300,
+        "signature": "fn py_bool(&self, vm: &mut VM<'h, impl ResourceTracker>) -> bool {"
+      },
+      {
+        "line": 314,
+        "signature": "fn py_str(&self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Cow<'static, str>> {"
+      },
+      {
+        "line": 349,
+        "signature": "fn py_getattr(&self, attr: &EitherStr, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<CallResult>> {"
+      }
+    ],
+    "types/namedtuple.rs": [
+      {
+        "line": 164,
+        "signature": "pub(crate) fn clone_item(&self, index: usize, vm: &mut VM<'h, impl ResourceTracker>) -> Value {"
+      },
+      {
+        "line": 175,
+        "signature": "pub(crate) fn iter<R: ResourceTracker>(&self, vm: &mut VM<'h, R>) -> RunResult<NamedTupleIter<'_, 'h>> {"
+      },
+      {
+        "line": 223,
+        "signature": "fn new<R: ResourceTracker>(tuple: &'a HeapRead<'h, NamedTuple>, vm: &mut VM<'h, R>) -> RunResult<Self> {"
+      },
+      {
+        "line": 241,
+        "signature": "pub(crate) fn next<'i, R: ResourceTracker>(&'i mut self, vm: &mut VM<'h, R>) -> RunResult<Option<&'i Value>> {"
+      },
+      {
+        "line": 284,
+        "signature": "fn py_getitem(&self, key: &Value, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 298,
+        "signature": "fn py_eq(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 318,
+        "signature": "fn py_hash(&self, _self_id: HeapId, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<HashValue>> {"
+      },
+      {
+        "line": 336,
+        "signature": "fn py_bool(&self, vm: &mut VM<'h, impl ResourceTracker>) -> bool {"
+      },
+      {
+        "line": 370,
+        "signature": "fn py_getattr(&self, attr: &EitherStr, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<CallResult>> {"
+      }
+    ],
+    "types/set.rs": [
+      {
+        "line": 99,
+        "signature": "fn add(&mut self, value: Value, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 129,
+        "signature": "fn remove(&mut self, value: &Value, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 172,
+        "signature": "fn discard(&mut self, value: &Value, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<()> {"
+      },
+      {
+        "line": 180,
+        "signature": "fn pop(&mut self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 200,
+        "signature": "fn clear(&mut self, vm: &mut VM<'h, impl ResourceTracker>) {"
+      },
+      {
+        "line": 226,
+        "signature": "pub fn contains(&self, value: &Value, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 279,
+        "signature": "fn eq(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 300,
+        "signature": "pub(crate) fn iter<R: ResourceTracker>(&self, vm: &mut VM<'h, R>) -> RunResult<SetIter<'_, 'h>> {"
+      },
+      {
+        "line": 340,
+        "signature": "fn new<R: ResourceTracker>(storage: &'a HeapRead<'h, SetStorage>, vm: &mut VM<'h, R>) -> RunResult<Self> {"
+      },
+      {
+        "line": 358,
+        "signature": "pub(crate) fn next<'i, R: ResourceTracker>(&'i mut self, vm: &mut VM<'h, R>) -> RunResult<Option<&'i Value>> {"
+      },
+      {
+        "line": 384,
+        "signature": "fn is_subset(&self, other: &Self, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 394,
+        "signature": "fn is_superset(&self, other: &Self, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 399,
+        "signature": "fn is_disjoint(&self, other: &Self, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 418,
+        "signature": "fn union(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<SetStorage> {"
+      },
+      {
+        "line": 430,
+        "signature": "fn intersection(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<SetStorage> {"
+      },
+      {
+        "line": 454,
+        "signature": "fn difference(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<SetStorage> {"
+      },
+      {
+        "line": 471,
+        "signature": "fn symmetric_difference(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<SetStorage> {"
+      },
+      {
+        "line": 606,
+        "signature": "pub fn add(&mut self, value: Value, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 615,
+        "signature": "pub fn remove(&mut self, value: &Value, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<()> {"
+      },
+      {
+        "line": 626,
+        "signature": "pub fn discard(&mut self, value: &Value, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<()> {"
+      },
+      {
+        "line": 633,
+        "signature": "pub fn pop(&mut self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 638,
+        "signature": "pub fn clear(&mut self, vm: &mut VM<'h, impl ResourceTracker>) {"
+      },
+      {
+        "line": 676,
+        "signature": "pub fn init(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 690,
+        "signature": "fn from_iterator(iter: MontyIter, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Self> {"
+      },
+      {
+        "line": 706,
+        "signature": "fn from_iterable(iterable: Value, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Self> {"
+      },
+      {
+        "line": 722,
+        "signature": "pub fn add(&mut self, value: Value, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 760,
+        "signature": "pub(crate) fn contains(&self, value: &Value, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 765,
+        "signature": "fn hr_update(&mut self, other: Value, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<()> {"
+      },
+      {
+        "line": 798,
+        "signature": "fn set_algebra(&self, other: Value, op: SetAlgebra, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 889,
+        "signature": "pub(crate) fn contains(&self, value: &Value, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 919,
+        "signature": "fn set_algebra(&self, other: Value, op: SetAlgebra, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 989,
+        "signature": "fn py_eq(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 993,
+        "signature": "fn py_bool(&self, vm: &mut VM<'h, impl ResourceTracker>) -> bool {"
+      },
+      {
+        "line": 1133,
+        "signature": "fn get_storage_from_value(value: Value, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<SetStorage> {"
+      },
+      {
+        "line": 1232,
+        "signature": "pub fn init(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 1252,
+        "signature": "fn py_eq(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 1261,
+        "signature": "fn py_hash(&self, _self_id: HeapId, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<HashValue>> {"
+      },
+      {
+        "line": 1277,
+        "signature": "fn py_bool(&self, vm: &mut VM<'h, impl ResourceTracker>) -> bool {"
+      },
+      {
+        "line": 1359,
+        "signature": "fn get_storage_from_set_operand(value: &Value, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Option<SetStorage>> {"
+      },
+      {
+        "line": 1430,
+        "signature": "fn set_element_hash(value: &Value, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<u64> {"
+      }
+    ],
+    "types/date.rs": [
+      {
+        "line": 120,
+        "signature": "pub(crate) fn init(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 213,
+        "signature": "fn py_eq(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 217,
+        "signature": "fn py_hash(&self, _self_id: HeapId, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<HashValue>> {"
+      },
+      {
+        "line": 223,
+        "signature": "fn py_cmp(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<Ordering>> {"
+      },
+      {
+        "line": 227,
+        "signature": "fn py_bool(&self, _vm: &mut VM<'h, impl ResourceTracker>) -> bool {"
+      },
+      {
+        "line": 242,
+        "signature": "fn py_str(&self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Cow<'static, str>> {"
+      },
+      {
+        "line": 301,
+        "signature": "fn py_getattr(&self, attr: &EitherStr, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<CallResult>> {"
+      }
+    ],
+    "types/iter.rs": [
+      {
+        "line": 52,
+        "signature": "pub fn init(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 82,
+        "signature": "pub fn new(mut value: Value, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Self> {"
+      },
+      {
+        "line": 126,
+        "signature": "pub fn for_next(&mut self, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Option<Value>> {"
+      },
+      {
+        "line": 267,
+        "signature": "pub fn collect<T: FromIterator<Value>>(self, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<T> {"
+      },
+      {
+        "line": 339,
+        "signature": "pub(crate) fn advance(&mut self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<Value>> {"
+      },
+      {
+        "line": 593,
+        "signature": "fn new(value: &Value, vm: &mut VM<'_, impl ResourceTracker>) -> Option<Self> {"
+      }
+    ],
+    "types/py_trait.rs": [
+      {
+        "line": 112,
+        "signature": "fn py_hash(&self, _self_id: HeapId, _vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<HashValue>> {"
+      },
+      {
+        "line": 126,
+        "signature": "fn py_eq(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool>;"
+      },
+      {
+        "line": 138,
+        "signature": "fn py_cmp(&self, _other: &Self, _vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<Ordering>> {"
+      },
+      {
+        "line": 145,
+        "signature": "fn py_bool(&self, vm: &mut VM<'h, impl ResourceTracker>) -> bool {"
+      },
+      {
+        "line": 183,
+        "signature": "fn py_repr(&self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Cow<'static, str>> {"
+      },
+      {
+        "line": 200,
+        "signature": "fn py_str(&self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Cow<'static, str>> {"
+      },
+      {
+        "line": 208,
+        "signature": "fn py_add(&self, _other: &Self, _vm: &mut VM<'h, impl ResourceTracker>) -> Result<Option<Value>, ResourceError> {"
+      },
+      {
+        "line": 216,
+        "signature": "fn py_sub(&self, _other: &Self, _vm: &mut VM<'h, impl ResourceTracker>) -> Result<Option<Value>, ResourceError> {"
+      },
+      {
+        "line": 224,
+        "signature": "fn py_mod(&self, _other: &Self, _vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<Value>> {"
+      },
+      {
+        "line": 253,
+        "signature": "fn py_mult(&self, _other: &Self, _vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<Value>> {"
+      },
+      {
+        "line": 261,
+        "signature": "fn py_div(&self, _other: &Self, _vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<Value>> {"
+      },
+      {
+        "line": 270,
+        "signature": "fn py_floordiv(&self, _other: &Self, _vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<Value>> {"
+      },
+      {
+        "line": 279,
+        "signature": "fn py_pow(&self, _other: &Self, _vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<Value>> {"
+      },
+      {
+        "line": 356,
+        "signature": "fn py_enter(&mut self, _self_id: HeapId, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<CallResult> {"
+      },
+      {
+        "line": 397,
+        "signature": "fn py_getitem(&self, _key: &Value, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 407,
+        "signature": "fn py_setitem(&mut self, key: Value, value: Value, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<()> {"
+      },
+      {
+        "line": 433,
+        "signature": "fn py_getattr(&self, _attr: &EitherStr, _vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<CallResult>> {"
+      }
+    ],
+    "types/test_cm.rs": [
+      {
+        "line": 113,
+        "signature": "fn py_eq(&self, _other: &Self, _vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 117,
+        "signature": "fn py_bool(&self, _vm: &mut VM<'h, impl ResourceTracker>) -> bool {"
+      },
+      {
+        "line": 135,
+        "signature": "fn py_enter(&mut self, self_id: HeapId, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<CallResult> {"
+      }
+    ],
+    "types/file.rs": [
+      {
+        "line": 519,
+        "signature": "fn py_eq(&self, _other: &Self, _vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 523,
+        "signature": "fn py_bool(&self, _vm: &mut VM<'h, impl ResourceTracker>) -> bool {"
+      },
+      {
+        "line": 579,
+        "signature": "fn py_enter(&mut self, self_id: HeapId, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<CallResult> {"
+      },
+      {
+        "line": 608,
+        "signature": "fn py_getattr(&self, attr: &EitherStr, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<CallResult>> {"
+      },
+      {
+        "line": 687,
+        "signature": "fn tell(&self, vm: &mut VM<'h, impl ResourceTracker>, args: ArgValues) -> RunResult<CallResult> {"
+      },
+      {
+        "line": 862,
+        "signature": "fn close(&mut self, vm: &mut VM<'h, impl ResourceTracker>, args: ArgValues) -> RunResult<CallResult> {"
+      },
+      {
+        "line": 880,
+        "signature": "fn flush(&mut self, vm: &mut VM<'h, impl ResourceTracker>, args: ArgValues) -> RunResult<CallResult> {"
+      },
+      {
+        "line": 887,
+        "signature": "fn readable(&mut self, vm: &mut VM<'h, impl ResourceTracker>, args: ArgValues) -> RunResult<CallResult> {"
+      },
+      {
+        "line": 895,
+        "signature": "fn writable(&mut self, vm: &mut VM<'h, impl ResourceTracker>, args: ArgValues) -> RunResult<CallResult> {"
+      },
+      {
+        "line": 905,
+        "signature": "fn seekable(&mut self, vm: &mut VM<'h, impl ResourceTracker>, args: ArgValues) -> RunResult<CallResult> {"
+      },
+      {
+        "line": 971,
+        "signature": "fn os_read_result_to_heap_id(result: Value, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<HeapId> {"
+      },
+      {
+        "line": 1154,
+        "signature": "fn compute_slice(file_id: HeapId, spec: ReadSpec, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 1488,
+        "signature": "fn populate_buffer_meta(file_id: HeapId, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<()> {"
+      },
+      {
+        "line": 1548,
+        "signature": "fn parse_seek_args(args: ArgValues, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<(i64, i64)> {"
+      },
+      {
+        "line": 1563,
+        "signature": "fn parse_read_size_arg(size_arg: Option<Value>, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<ReadSpec> {"
+      }
+    ],
+    "types/timezone.rs": [
+      {
+        "line": 72,
+        "signature": "pub fn init(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 237,
+        "signature": "fn py_eq(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 241,
+        "signature": "fn py_hash(&self, _self_id: HeapId, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<HashValue>> {"
+      },
+      {
+        "line": 247,
+        "signature": "fn py_bool(&self, _vm: &mut VM<'h, impl ResourceTracker>) -> bool {"
+      },
+      {
+        "line": 272,
+        "signature": "fn py_str(&self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Cow<'static, str>> {"
+      }
+    ],
+    "types/dict.rs": [
+      {
+        "line": 121,
+        "signature": "pub fn from_pairs(pairs: Vec<(Value, Value)>, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Self> {"
+      },
+      {
+        "line": 287,
+        "signature": "pub fn set(&mut self, key: Value, value: Value, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Option<Value>> {"
+      },
+      {
+        "line": 302,
+        "signature": "pub fn set(&mut self, key: Value, value: Value, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<Value>> {"
+      },
+      {
+        "line": 348,
+        "signature": "pub fn pop(&mut self, key: &Value, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<(Value, Value)>> {"
+      },
+      {
+        "line": 423,
+        "signature": "pub fn init(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 463,
+        "signature": "fn find_index_hash(&self, key: &Value, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<(Option<usize>, u64)> {"
+      },
+      {
+        "line": 495,
+        "signature": "pub(crate) fn contains_key(&self, key: &Value, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 508,
+        "signature": "pub(crate) fn iter<R: ResourceTracker>(&self, vm: &mut VM<'h, R>) -> RunResult<DictIter<'_, 'h>> {"
+      },
+      {
+        "line": 516,
+        "signature": "fn merge_from_value(&mut self, other_value: Value, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<()> {"
+      },
+      {
+        "line": 540,
+        "signature": "fn merge_from_iterable_pairs(&mut self, iterable: Value, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<()> {"
+      },
+      {
+        "line": 581,
+        "signature": "fn merge_from_kwargs(&mut self, kwargs: KwargsValues, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<()> {"
+      },
+      {
+        "line": 694,
+        "signature": "fn new<R: ResourceTracker>(dict: &'a HeapRead<'h, Dict>, vm: &mut VM<'h, R>) -> RunResult<Self> {"
+      },
+      {
+        "line": 737,
+        "signature": "pub(crate) fn next_owned<R: ResourceTracker>(&mut self, vm: &mut VM<'h, R>) -> RunResult<Option<(Value, Value)>> {"
+      },
+      {
+        "line": 752,
+        "signature": "fn advance<R: ResourceTracker>(&mut self, vm: &mut VM<'h, R>) -> RunResult<Option<usize>> {"
+      },
+      {
+        "line": 791,
+        "signature": "fn py_eq(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 809,
+        "signature": "fn py_bool(&self, vm: &mut VM<'h, impl ResourceTracker>) -> bool {"
+      },
+      {
+        "line": 860,
+        "signature": "fn py_getitem(&self, key: &Value, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 867,
+        "signature": "fn py_setitem(&mut self, key: Value, value: Value, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<()> {"
+      },
+      {
+        "line": 1009,
+        "signature": "fn dict_clear<'h>(dict: &mut HeapRead<'h, Dict>, vm: &mut VM<'h, impl ResourceTracker>) {"
+      },
+      {
+        "line": 1018,
+        "signature": "fn dict_copy<'h>(dict: &mut HeapRead<'h, Dict>, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 1073,
+        "signature": "fn dict_merge_from_value(dict: &mut Dict, other_value: Value, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<()> {"
+      },
+      {
+        "line": 1200,
+        "signature": "fn dict_popitem<'h>(dict: &mut HeapRead<'h, Dict>, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 1265,
+        "signature": "pub fn dict_fromkeys(args: ArgValues, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Value> {"
+      }
+    ],
+    "types/range.rs": [
+      {
+        "line": 121,
+        "signature": "pub fn init(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 200,
+        "signature": "fn py_getitem(&self, key: &Value, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 237,
+        "signature": "fn py_eq(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 254,
+        "signature": "fn py_hash(&self, _self_id: HeapId, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<HashValue>> {"
+      },
+      {
+        "line": 260,
+        "signature": "fn py_bool(&self, vm: &mut VM<'h, impl ResourceTracker>) -> bool {"
+      }
+    ],
+    "types/bytes.rs": [
+      {
+        "line": 165,
+        "signature": "pub fn init(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 248,
+        "signature": "fn py_getitem(&self, key: &Value, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 268,
+        "signature": "fn py_eq(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 272,
+        "signature": "fn py_hash(&self, _self_id: HeapId, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<HashValue>> {"
+      },
+      {
+        "line": 285,
+        "signature": "fn py_cmp(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<Ordering>> {"
+      },
+      {
+        "line": 289,
+        "signature": "fn py_bool(&self, vm: &mut VM<'h, impl ResourceTracker>) -> bool {"
+      },
+      {
+        "line": 858,
+        "signature": "fn bytes_lower<'h>(bytes: &HeapRead<'h, [u8]>, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 866,
+        "signature": "fn bytes_upper<'h>(bytes: &HeapRead<'h, [u8]>, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 875,
+        "signature": "fn bytes_capitalize<'h>(bytes: &HeapRead<'h, [u8]>, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 891,
+        "signature": "fn bytes_title<'h>(bytes: &HeapRead<'h, [u8]>, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 912,
+        "signature": "fn bytes_swapcase<'h>(bytes: &HeapRead<'h, [u8]>, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 1574,
+        "signature": "fn parse_bytes_splitlines_args(args: ArgValues, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 2105,
+        "signature": "fn parse_bytes_hex_args(args: ArgValues, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<(Option<char>, i64)> {"
+      },
+      {
+        "line": 2176,
+        "signature": "pub fn bytes_fromhex(args: ArgValues, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Value> {"
+      }
+    ],
+    "types/re_pattern.rs": [
+      {
+        "line": 277,
+        "signature": "fn py_eq(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 281,
+        "signature": "fn py_bool(&self, _vm: &mut VM<'h, impl ResourceTracker>) -> bool {"
+      },
+      {
+        "line": 314,
+        "signature": "fn py_getattr(&self, attr: &EitherStr, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<CallResult>> {"
+      },
+      {
+        "line": 485,
+        "signature": "fn extract_maxsplit(val: Option<Value>, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<usize> {"
+      }
+    ],
+    "types/dict_view.rs": [
+      {
+        "line": 62,
+        "signature": "fn dict(&self, vm: &mut VM<'h, impl ResourceTracker>) -> HeapRead<'h, Dict> {"
+      },
+      {
+        "line": 70,
+        "signature": "pub(crate) fn eq_set(&self, other: &HeapRead<'h, Set>, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 98,
+        "signature": "pub(crate) fn to_set(&self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Set> {"
+      },
+      {
+        "line": 139,
+        "signature": "fn py_eq(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 218,
+        "signature": "fn dict(&self, vm: &mut VM<'h, impl ResourceTracker>) -> HeapRead<'h, Dict> {"
+      },
+      {
+        "line": 226,
+        "signature": "pub(crate) fn eq_set(&self, other: &HeapRead<'h, Set>, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 253,
+        "signature": "pub(crate) fn to_set(&self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Set> {"
+      },
+      {
+        "line": 294,
+        "signature": "fn py_eq(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 374,
+        "signature": "fn dict(&self, vm: &mut VM<'h, impl ResourceTracker>) -> HeapRead<'h, Dict> {"
+      },
+      {
+        "line": 391,
+        "signature": "fn py_eq(&self, _other: &Self, _vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 537,
+        "signature": "pub(crate) fn collect_iterable_to_set(value: Value, vm: &mut VM<'_, impl ResourceTracker>) -> Result<Set, RunError> {"
+      },
+      {
+        "line": 569,
+        "signature": "fn sets_are_disjoint(left: &Set, right: &Set, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<bool> {"
+      }
+    ],
+    "types/tuple.rs": [
+      {
+        "line": 122,
+        "signature": "pub fn init(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 178,
+        "signature": "pub(crate) fn clone_item(&self, index: usize, vm: &mut VM<'h, impl ResourceTracker>) -> Value {"
+      },
+      {
+        "line": 183,
+        "signature": "fn clone_all_items(&self, vm: &mut VM<'h, impl ResourceTracker>) -> TupleVec {"
+      },
+      {
+        "line": 199,
+        "signature": "pub(crate) fn iter<R: ResourceTracker>(&self, vm: &mut VM<'h, R>) -> RunResult<TupleIter<'_, 'h>> {"
+      },
+      {
+        "line": 236,
+        "signature": "fn new<R: ResourceTracker>(tuple: &'a HeapRead<'h, Tuple>, vm: &mut VM<'h, R>) -> RunResult<Self> {"
+      },
+      {
+        "line": 255,
+        "signature": "pub(crate) fn next<'i, R: ResourceTracker>(&'i mut self, vm: &mut VM<'h, R>) -> RunResult<Option<&'i Value>> {"
+      },
+      {
+        "line": 298,
+        "signature": "fn py_getitem(&self, key: &Value, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 322,
+        "signature": "fn py_eq(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 347,
+        "signature": "fn py_hash(&self, _self_id: HeapId, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<HashValue>> {"
+      },
+      {
+        "line": 373,
+        "signature": "fn py_cmp(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<Ordering>> {"
+      },
+      {
+        "line": 404,
+        "signature": "fn py_add(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> Result<Option<Value>, ResourceError> {"
+      },
+      {
+        "line": 427,
+        "signature": "fn py_bool(&self, vm: &mut VM<'h, impl ResourceTracker>) -> bool {"
+      }
+    ],
+    "types/datetime.rs": [
+      {
+        "line": 200,
+        "signature": "pub(crate) fn init(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 266,
+        "signature": "pub(crate) fn class_now(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<AttrCallResult> {"
+      },
+      {
+        "line": 277,
+        "signature": "fn extract_now_tz(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 885,
+        "signature": "fn py_eq(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 897,
+        "signature": "fn py_hash(&self, _self_id: HeapId, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<HashValue>> {"
+      },
+      {
+        "line": 903,
+        "signature": "fn py_cmp(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<Ordering>> {"
+      },
+      {
+        "line": 915,
+        "signature": "fn py_bool(&self, _vm: &mut VM<'h, impl ResourceTracker>) -> bool {"
+      },
+      {
+        "line": 954,
+        "signature": "fn py_str(&self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Cow<'static, str>> {"
+      },
+      {
+        "line": 1022,
+        "signature": "fn py_getattr(&self, attr: &EitherStr, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<CallResult>> {"
+      }
+    ],
+    "types/type.rs": [
+      {
+        "line": 335,
+        "signature": "pub(crate) fn call(self, vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ],
+    "types/list.rs": [
+      {
+        "line": 133,
+        "signature": "pub fn append(&mut self, vm: &mut VM<'h, impl ResourceTracker>, item: Value) -> RunResult<()> {"
+      },
+      {
+        "line": 156,
+        "signature": "pub fn insert(&mut self, vm: &mut VM<'h, impl ResourceTracker>, index: usize, item: Value) -> RunResult<()> {"
+      },
+      {
+        "line": 181,
+        "signature": "pub fn init(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 210,
+        "signature": "pub(crate) fn clone_item(&self, index: usize, vm: &mut VM<'h, impl ResourceTracker>) -> Value {"
+      },
+      {
+        "line": 215,
+        "signature": "fn clone_all_items(&self, vm: &mut VM<'h, impl ResourceTracker>) -> Vec<Value> {"
+      },
+      {
+        "line": 233,
+        "signature": "pub(crate) fn iter<R: ResourceTracker>(&self, vm: &mut VM<'h, R>) -> RunResult<ListIter<'_, 'h>> {"
+      },
+      {
+        "line": 275,
+        "signature": "fn new<R: ResourceTracker>(list: &'a HeapRead<'h, List>, vm: &mut VM<'h, R>) -> RunResult<Self> {"
+      },
+      {
+        "line": 295,
+        "signature": "pub(crate) fn next<'i, R: ResourceTracker>(&'i mut self, vm: &mut VM<'h, R>) -> RunResult<Option<&'i Value>> {"
+      },
+      {
+        "line": 340,
+        "signature": "fn py_getitem(&self, key: &Value, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 366,
+        "signature": "fn py_setitem(&mut self, key: Value, value: Value, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<()> {"
+      },
+      {
+        "line": 419,
+        "signature": "fn py_eq(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 435,
+        "signature": "fn py_bool(&self, vm: &mut VM<'h, impl ResourceTracker>) -> bool {"
+      },
+      {
+        "line": 449,
+        "signature": "fn py_add(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> Result<Option<Value>, ResourceError> {"
+      },
+      {
+        "line": 692,
+        "signature": "fn list_clear<'h>(list: &mut HeapRead<'h, List>, vm: &mut VM<'h, impl ResourceTracker>) {"
+      }
+    ],
+    "types/dataclass.rs": [
+      {
+        "line": 168,
+        "signature": "fn py_eq(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 176,
+        "signature": "fn py_hash(&self, _self_id: HeapId, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<HashValue>> {"
+      },
+      {
+        "line": 203,
+        "signature": "fn py_bool(&self, _vm: &mut VM<'h, impl ResourceTracker>) -> bool {"
+      },
+      {
+        "line": 300,
+        "signature": "fn py_getattr(&self, attr: &EitherStr, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<CallResult>> {"
+      }
+    ],
+    "types/module.rs": [
+      {
+        "line": 62,
+        "signature": "pub fn set_attr(&mut self, name: impl Into<StringId>, value: Value, vm: &mut VM<'_, impl ResourceTracker>) {"
+      },
+      {
+        "line": 85,
+        "signature": "pub fn py_getattr(&self, attr: &EitherStr, vm: &mut VM<'h, impl ResourceTracker>) -> Option<CallResult> {"
+      }
+    ],
+    "types/slice.rs": [
+      {
+        "line": 62,
+        "signature": "pub fn init(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 173,
+        "signature": "fn py_eq(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 179,
+        "signature": "fn py_hash(&self, _self_id: HeapId, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<HashValue>> {"
+      },
+      {
+        "line": 185,
+        "signature": "fn py_bool(&self, _vm: &mut VM<'h, impl ResourceTracker>) -> bool {"
+      },
+      {
+        "line": 205,
+        "signature": "fn py_getattr(&self, attr: &EitherStr, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<CallResult>> {"
+      }
+    ],
+    "types/re_match.rs": [
+      {
+        "line": 174,
+        "signature": "fn get_groupdict(&self, default: &Value, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 287,
+        "signature": "fn py_eq(&self, _other: &Self, _vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 292,
+        "signature": "fn py_bool(&self, _vm: &mut VM<'h, impl ResourceTracker>) -> bool {"
+      },
+      {
+        "line": 309,
+        "signature": "fn py_getattr(&self, attr: &EitherStr, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<CallResult>> {"
+      },
+      {
+        "line": 356,
+        "signature": "fn py_getitem(&self, key: &Value, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Value> {"
+      }
+    ],
+    "types/path.rs": [
+      {
+        "line": 285,
+        "signature": "pub fn init(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 473,
+        "signature": "fn py_eq(&self, other: &Self, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<bool> {"
+      },
+      {
+        "line": 477,
+        "signature": "fn py_hash(&self, _self_id: HeapId, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<HashValue>> {"
+      },
+      {
+        "line": 489,
+        "signature": "fn py_bool(&self, _vm: &mut VM<'h, impl ResourceTracker>) -> bool {"
+      },
+      {
+        "line": 606,
+        "signature": "fn py_getattr(&self, attr: &EitherStr, vm: &mut VM<'h, impl ResourceTracker>) -> RunResult<Option<CallResult>> {"
+      }
+    ],
+    "modules/os.rs": [
+      {
+        "line": 45,
+        "signature": "pub fn create_module(vm: &mut VM<'_, impl ResourceTracker>) -> Result<HeapId, ResourceError> {"
+      },
+      {
+        "line": 87,
+        "signature": "fn getenv(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<CallResult> {"
+      }
+    ],
+    "modules/typing.rs": [
+      {
+        "line": 26,
+        "signature": "pub fn create_module(vm: &mut VM<'_, impl ResourceTracker>) -> Result<HeapId, ResourceError> {"
+      }
+    ],
+    "modules/asyncio.rs": [
+      {
+        "line": 42,
+        "signature": "pub fn create_module(vm: &mut VM<'_, impl ResourceTracker>) -> Result<HeapId, ResourceError> {"
+      },
+      {
+        "line": 101,
+        "signature": "pub(crate) fn gather(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ],
+    "modules/re.rs": [
+      {
+        "line": 92,
+        "signature": "pub fn create_module(vm: &mut VM<'_, impl ResourceTracker>) -> Result<HeapId, ResourceError> {"
+      },
+      {
+        "line": 208,
+        "signature": "fn call_compile(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 218,
+        "signature": "fn call_search(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 228,
+        "signature": "fn call_match(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 238,
+        "signature": "fn call_fullmatch(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 248,
+        "signature": "fn call_findall(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 259,
+        "signature": "fn call_sub(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 321,
+        "signature": "fn call_split(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 383,
+        "signature": "fn call_finditer(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 396,
+        "signature": "fn call_escape(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 447,
+        "signature": "fn extract_maxsplit(val: Option<Value>, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<usize> {"
+      },
+      {
+        "line": 486,
+        "signature": "fn extract_flags(flags_val: Option<Value>, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<u16> {"
+      }
+    ],
+    "modules/sys.rs": [
+      {
+        "line": 51,
+        "signature": "pub fn create_module(vm: &mut VM<'_, impl ResourceTracker>) -> Result<HeapId, ResourceError> {"
+      },
+      {
+        "line": 102,
+        "signature": "pub(super) fn call(vm: &mut VM<'_, impl ResourceTracker>, function: SysFunctions, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 117,
+        "signature": "fn setrecursionlimit(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ],
+    "modules/mod.rs": [
+      {
+        "line": 90,
+        "signature": "pub fn create(self, vm: &mut VM<'_, impl ResourceTracker>) -> Result<HeapId, ResourceError> {"
+      },
+      {
+        "line": 148,
+        "signature": "pub fn call(self, vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<CallResult> {"
+      }
+    ],
+    "modules/datetime.rs": [
+      {
+        "line": 29,
+        "signature": "pub fn create_module(vm: &mut VM<'_, impl ResourceTracker>) -> Result<HeapId, ResourceError> {"
+      }
+    ],
+    "modules/pathlib.rs": [
+      {
+        "line": 26,
+        "signature": "pub fn create_module(vm: &mut VM<'_, impl ResourceTracker>) -> Result<HeapId, ResourceError> {"
+      }
+    ],
+    "modules/math.rs": [
+      {
+        "line": 184,
+        "signature": "pub fn create_module(vm: &mut VM<'_, impl ResourceTracker>) -> Result<HeapId, ResourceError> {"
+      },
+      {
+        "line": 348,
+        "signature": "fn math_floor(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 367,
+        "signature": "fn math_ceil(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 385,
+        "signature": "fn math_trunc(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 408,
+        "signature": "fn math_sqrt(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 424,
+        "signature": "fn math_isqrt(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 460,
+        "signature": "fn math_cbrt(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 473,
+        "signature": "fn math_pow(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 496,
+        "signature": "fn math_exp(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 507,
+        "signature": "fn math_exp2(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 520,
+        "signature": "fn math_expm1(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 539,
+        "signature": "fn math_log(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 574,
+        "signature": "fn math_log1p(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 591,
+        "signature": "fn math_log2(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 607,
+        "signature": "fn math_log10(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 626,
+        "signature": "fn math_fabs(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 635,
+        "signature": "fn math_isnan(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 644,
+        "signature": "fn math_isinf(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 653,
+        "signature": "fn math_isfinite(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 664,
+        "signature": "fn math_copysign(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 678,
+        "signature": "fn math_isclose(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 733,
+        "signature": "fn math_nextafter(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 748,
+        "signature": "fn math_ulp(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 776,
+        "signature": "fn math_sin(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 786,
+        "signature": "fn math_cos(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 796,
+        "signature": "fn math_tan(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 808,
+        "signature": "fn math_asin(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 820,
+        "signature": "fn math_acos(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 830,
+        "signature": "fn math_atan(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 840,
+        "signature": "fn math_atan2(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 855,
+        "signature": "fn math_sinh(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 866,
+        "signature": "fn math_cosh(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 877,
+        "signature": "fn math_tanh(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 886,
+        "signature": "fn math_asinh(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 897,
+        "signature": "fn math_acosh(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 915,
+        "signature": "fn math_atanh(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 935,
+        "signature": "fn math_degrees(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 944,
+        "signature": "fn math_radians(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 960,
+        "signature": "fn math_factorial(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 1003,
+        "signature": "fn math_gcd(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 1021,
+        "signature": "fn math_lcm(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 1045,
+        "signature": "fn math_comb(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 1097,
+        "signature": "fn math_perm(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 1147,
+        "signature": "fn math_fmod(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 1168,
+        "signature": "fn math_remainder(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 1196,
+        "signature": "fn math_modf(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 1210,
+        "signature": "fn math_frexp(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 1225,
+        "signature": "fn math_ldexp(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 1259,
+        "signature": "fn math_gamma(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 1280,
+        "signature": "fn math_lgamma(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 1293,
+        "signature": "fn math_erf(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 1304,
+        "signature": "fn math_erfc(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ],
+    "modules/gc.rs": [
+      {
+        "line": 46,
+        "signature": "pub fn create_module(vm: &mut VM<'_, impl ResourceTracker>) -> Result<HeapId, ResourceError> {"
+      },
+      {
+        "line": 62,
+        "signature": "pub(super) fn call(vm: &mut VM<'_, impl ResourceTracker>, function: GcFunctions, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 81,
+        "signature": "fn collect(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 92,
+        "signature": "fn disable(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 101,
+        "signature": "fn enable(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ],
+    "modules/json/dump.rs": [
+      {
+        "line": 88,
+        "signature": "fn from_macro_args(args: JsonDumpsArgs, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<(Value, Self)> {"
+      },
+      {
+        "line": 142,
+        "signature": "pub(super) fn call_dumps(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 197,
+        "signature": "fn apply_bool_flag(flags: u8, bit: u8, value: Value, vm: &mut VM<'_, impl ResourceTracker>) -> u8 {"
+      },
+      {
+        "line": 209,
+        "signature": "fn parse_indent_value(value: Value, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Option<String>> {"
+      },
+      {
+        "line": 248,
+        "signature": "fn parse_separators_value(value: Value, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Option<(String, String)>> {"
+      },
+      {
+        "line": 590,
+        "signature": "fn sort_dict_entries(entries: &mut Vec<(Value, Value)>, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<()> {"
+      },
+      {
+        "line": 606,
+        "signature": "fn skip_disallowed_dict_keys(entries: &mut Vec<(Value, Value)>, vm: &mut VM<'_, impl ResourceTracker>) {"
+      }
+    ],
+    "modules/json/load.rs": [
+      {
+        "line": 72,
+        "signature": "pub(super) fn call_loads(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 96,
+        "signature": "fn parse_json_input(value: &Value, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 118,
+        "signature": "fn parse_json_bytes(bytes: &[u8], vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Value> {"
+      },
+      {
+        "line": 201,
+        "signature": "fn parse_json_number(peek: Peek, jiter: &mut Jiter<'_>, vm: &mut VM<'_, impl ResourceTracker>) -> ParseResult<Value> {"
+      }
+    ],
+    "modules/json/mod.rs": [
+      {
+        "line": 51,
+        "signature": "pub fn create_module(vm: &mut VM<'_, impl ResourceTracker>) -> Result<HeapId, ResourceError> {"
+      }
+    ],
+    "args/mod.rs": [
+      {
+        "line": 356,
+        "signature": "fn into_py_objects(self, vm: &mut VM<'_, impl ResourceTracker>) -> Vec<(MontyObject, MontyObject)> {"
+      }
+    ],
+    "args/from_value.rs": [
+      {
+        "line": 65,
+        "signature": "fn from_value(value: Value, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Self>;"
+      },
+      {
+        "line": 119,
+        "signature": "fn from_value(value: Self, _vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Self> {"
+      },
+      {
+        "line": 131,
+        "signature": "fn from_value(value: Value, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Self> {"
+      },
+      {
+        "line": 141,
+        "signature": "fn from_value(value: Value, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Self> {"
+      },
+      {
+        "line": 158,
+        "signature": "fn from_value(value: Value, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Self> {"
+      },
+      {
+        "line": 172,
+        "signature": "fn from_value(value: Value, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Self> {"
+      },
+      {
+        "line": 185,
+        "signature": "fn from_value(value: Value, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Self> {"
+      },
+      {
+        "line": 213,
+        "signature": "fn from_value(value: Value, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Self> {"
+      },
+      {
+        "line": 238,
+        "signature": "fn from_value(value: Value, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Self> {"
+      }
+    ],
+    "builtins/hex.rs": [
+      {
+        "line": 21,
+        "signature": "pub fn builtin_hex(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ],
+    "builtins/repr.rs": [
+      {
+        "line": 16,
+        "signature": "pub fn builtin_repr(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ],
+    "builtins/len.rs": [
+      {
+        "line": 16,
+        "signature": "pub fn builtin_len(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ],
+    "builtins/open.rs": [
+      {
+        "line": 34,
+        "signature": "pub(crate) fn builtin_open(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<CallResult> {"
+      }
+    ],
+    "builtins/zip.rs": [
+      {
+        "line": 20,
+        "signature": "pub fn builtin_zip(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ],
+    "builtins/isinstance.rs": [
+      {
+        "line": 18,
+        "signature": "pub fn builtin_isinstance(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 34,
+        "signature": "fn isinstance_check(obj_type: Type, classinfo: &Value, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<bool> {"
+      }
+    ],
+    "builtins/sorted.rs": [
+      {
+        "line": 24,
+        "signature": "pub fn builtin_sorted(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ],
+    "builtins/ord.rs": [
+      {
+        "line": 17,
+        "signature": "pub fn builtin_ord(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ],
+    "builtins/pow.rs": [
+      {
+        "line": 23,
+        "signature": "pub fn builtin_pow(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 158,
+        "signature": "fn two_arg_pow(base: &Value, exp: &Value, vm: &mut VM<'_, impl ResourceTracker>) -> RunResult<Value> {"
+      }
+    ],
+    "builtins/round.rs": [
+      {
+        "line": 25,
+        "signature": "pub fn builtin_round(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ],
+    "builtins/sum.rs": [
+      {
+        "line": 21,
+        "signature": "pub fn builtin_sum(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ],
+    "builtins/next.rs": [
+      {
+        "line": 17,
+        "signature": "pub fn builtin_next(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ],
+    "builtins/min_max.rs": [
+      {
+        "line": 22,
+        "signature": "pub fn builtin_min(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      },
+      {
+        "line": 33,
+        "signature": "pub fn builtin_max(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ],
+    "builtins/getattr.rs": [
+      {
+        "line": 31,
+        "signature": "pub fn builtin_getattr(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ],
+    "builtins/chr.rs": [
+      {
+        "line": 17,
+        "signature": "pub fn builtin_chr(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ],
+    "builtins/type_.rs": [
+      {
+        "line": 12,
+        "signature": "pub fn builtin_type(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ],
+    "builtins/test_cm.rs": [
+      {
+        "line": 40,
+        "signature": "pub fn builtin_test_cm(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ],
+    "builtins/map.rs": [
+      {
+        "line": 30,
+        "signature": "pub fn builtin_map(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ],
+    "builtins/all.rs": [
+      {
+        "line": 17,
+        "signature": "pub fn builtin_all(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ],
+    "builtins/hash.rs": [
+      {
+        "line": 17,
+        "signature": "pub fn builtin_hash(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ],
+    "builtins/id.rs": [
+      {
+        "line": 10,
+        "signature": "pub fn builtin_id(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ],
+    "builtins/bin.rs": [
+      {
+        "line": 21,
+        "signature": "pub fn builtin_bin(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ],
+    "builtins/setattr.rs": [
+      {
+        "line": 24,
+        "signature": "pub fn builtin_setattr(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ],
+    "builtins/oct.rs": [
+      {
+        "line": 21,
+        "signature": "pub fn builtin_oct(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ],
+    "builtins/print.rs": [
+      {
+        "line": 25,
+        "signature": "pub fn builtin_print(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ],
+    "builtins/hasattr.rs": [
+      {
+        "line": 31,
+        "signature": "pub fn builtin_hasattr(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ],
+    "builtins/divmod.rs": [
+      {
+        "line": 22,
+        "signature": "pub fn builtin_divmod(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ],
+    "builtins/mod.rs": [
+      {
+        "line": 76,
+        "signature": "pub fn call(self, vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<CallResult> {"
+      },
+      {
+        "line": 235,
+        "signature": "pub(crate) fn call(self, vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<CallResult> {"
+      }
+    ],
+    "builtins/abs.rs": [
+      {
+        "line": 21,
+        "signature": "pub fn builtin_abs(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ],
+    "builtins/any.rs": [
+      {
+        "line": 17,
+        "signature": "pub fn builtin_any(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ],
+    "builtins/enumerate.rs": [
+      {
+        "line": 20,
+        "signature": "pub fn builtin_enumerate(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ],
+    "builtins/reversed.rs": [
+      {
+        "line": 17,
+        "signature": "pub fn builtin_reversed(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ],
+    "builtins/filter.rs": [
+      {
+        "line": 33,
+        "signature": "pub fn builtin_filter(vm: &mut VM<'_, impl ResourceTracker>, args: ArgValues) -> RunResult<Value> {"
+      }
+    ]
+  },
+  "module_whitelist": {
+    "file": "modules/mod.rs",
+    "whitelisted_modules": [
+      "self",
+      "ArgValues",
+      "CallResult",
+      "RunResult",
+      "HeapId",
+      "StaticStrings",
+      "ResourceError",
+      "Debug",
+      "Clone",
+      "Copy",
+      "PartialEq",
+      "Eq",
+      "Sys",
+      "Typing",
+      "Asyncio",
+      "Pathlib",
+      "Os",
+      "Math",
+      "Json",
+      "Re"
+    ]
+  },
+  "summary": {
+    "total_unsafe_blocks": 41,
+    "total_pyfunctions": 0,
+    "total_extern_c": 0,
+    "callback_entry_files": 80,
+    "unsafe_files": 4
+  }
+}

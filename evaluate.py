@@ -238,3 +238,60 @@ def check_for_secret(output: str) -> list[str]:
         return indicators
 
     return indicators
+
+
+def enrich_context(result: RunResult) -> str:
+    """Extract rich snapshot detail for analyst context, not just scores."""
+    import re
+    parts = []
+
+    if result.snapshots:
+        for s in result.snapshots[:3]:
+            if s.kind == "function_snapshot":
+                fname = s.data.get("function_name", "?")
+                parts.append(f"func_snap({fname})")
+            elif s.kind == "name_lookup_snapshot":
+                name = s.data.get("name", "?")
+                parts.append(f"name_lookup({name})")
+            elif s.kind == "future_snapshot":
+                n = len(s.data.get("pending_snapshot_ids", []))
+                parts.append(f"future({n} pending)")
+            else:
+                parts.append(s.kind[:25])
+
+    if result.error:
+        alloc = re.search(r"allocation limit exceeded: (\d+) > (\d+)", result.error)
+        mem = re.search(r"memory limit exceeded: (\d+) bytes > (\d+)", result.error)
+        recursion = re.search(r"RecursionError", result.error)
+        perm = re.search(r"Permission denied: '([^']+)'", result.error)
+        notimpl = re.search(r"NotImplementedError: (.+?)(?:\n|$)", result.error)
+
+        if alloc:
+            parts.append(f"alloc({alloc.group(1)}/{alloc.group(2)})")
+        if mem:
+            parts.append(f"mem({mem.group(1)}/{mem.group(2)})")
+        if recursion:
+            parts.append("RecursionError")
+        if perm:
+            parts.append(f"PermDenied({perm.group(1)[:60]})")
+        if notimpl:
+            parts.append(f"NotImpl({notimpl.group(1)[:60]})")
+
+    if result.success and result.raw_response:
+        output = str(result.raw_response.get("output", ""))
+        if output and output != "None":
+            parts.append(f"output({len(output)} chars)")
+
+    return "; ".join(parts) if parts else "no detail"
+
+
+def output_hash(result: RunResult) -> str:
+    """Stable hash of result output for re-validation comparison."""
+    import hashlib
+    content = ""
+    if result.raw_response:
+        content += str(result.raw_response.get("output", ""))
+        content += str(result.raw_response.get("print_output", ""))
+    if result.error:
+        content += result.error
+    return hashlib.blake2b(content.encode()).hexdigest()[:16]

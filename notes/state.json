@@ -1,20 +1,13 @@
 {
-  "last_iteration": 35,
-  "template_idx": 3,
+  "last_iteration": 0,
   "score_counts": {
-    "0": 35,
+    "0": 1,
     "1": 0,
     "2": 0,
     "3": 0,
     "4": 0,
     "5": 0
   },
-  "consecutive_zeros": 3,
-  "dead_templates": [
-    "G",
-    "A",
-    "H"
-  ],
-  "focus": "interrupted",
-  "updated_at": "2026-06-03T22:23:20.749676+00:00"
+  "bandit_total": 1,
+  "updated_at": "2026-06-05T19:39:23.605239+00:00"
 }

@@ -1,6 +1,6 @@
 {
   "pydantic/monty": {
-    "fetched_at": "2026-06-05T193801Z",
+    "fetched_at": "2026-06-05T193536Z",
     "exploitable": [
       {
         "number": 483,
@@ -83,7 +83,7 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/364",
-        "age_days": 46.3,
+        "age_days": 46.2,
         "stalled_days": 46.2
       },
       {
@@ -108,7 +108,7 @@
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/351",
         "age_days": 49.2,
-        "stalled_days": 49.2
+        "stalled_days": 49.1
       },
       {
         "number": 350,
@@ -915,7 +915,7 @@
     ]
   },
   "pydantic/pydantic-ai": {
-    "fetched_at": "2026-06-05T193801Z",
+    "fetched_at": "2026-06-05T193536Z",
     "exploitable": [
       {
         "number": 5800,
@@ -1685,7 +1685,7 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5638",
-        "age_days": 12.0,
+        "age_days": 11.9,
         "stalled_days": 11.9
       },
       {
@@ -1697,7 +1697,7 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5637",
-        "age_days": 12.0,
+        "age_days": 11.9,
         "stalled_days": 11.1
       },
       {

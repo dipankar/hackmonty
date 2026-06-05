@@ -1,16 +1,22 @@
-"""LLM agent driver for the hacking loop — supports analyst/coder role split."""
+"""LLM agent driver — async with minimax-m3:cloud via Ollama Cloud API.
+
+Supports analyst (strategy), coder (exploit generation), and meta_review roles.
+All Ollama calls are wrapped in asyncio.to_thread for non-blocking concurrency.
+"""
 
 from __future__ import annotations
 
+import asyncio
 import json
 import os
 import re
+import hashlib
 from dataclasses import dataclass, field
 from typing import Any
 
 
 OLLAMA_HOST = "https://ollama.com"
-MODEL = "qwen3.5:cloud"
+MODEL = "minimax-m3:cloud"
 
 
 @dataclass
@@ -18,15 +24,14 @@ class AgentResponse:
     exploit_code: str = ""
     reasoning: str = ""
     focus_area: str = ""
-
-    # Analyst-specific
     chosen_template: str = ""
     strategy: str = ""
-    confidence: str = ""
+    raw_response: str = ""
 
     # Meta-review
     assessment: str = ""
     suggested_changes: str = ""
+    confidence: str = ""
 
 
 class Agent:
@@ -36,14 +41,14 @@ class Agent:
             raise RuntimeError("OLLAMA_API_KEY not set.")
 
         from ollama import Client
-        self.client = Client(
+        self._client = Client(
             host=OLLAMA_HOST,
             headers={"Authorization": f"Bearer {self.api_key}"},
         )
 
-    def _call(self, system: str, user: str, temperature: float = 0.7) -> str:
+    def _call_sync(self, system: str, user: str, temperature: float = 0.7) -> str:
         try:
-            response = self.client.chat(
+            response = self._client.chat(
                 model=MODEL,
                 messages=[
                     {"role": "system", "content": system},
@@ -55,21 +60,22 @@ class Agent:
         except Exception as e:
             return f"API_ERROR: {e}"
 
-    def analyst(self, system_prompt: str, history: str) -> AgentResponse:
-        """Analyst role: review history, pick best attack template, write strategy."""
+    async def _call(self, system: str, user: str, temperature: float = 0.7) -> str:
+        return await asyncio.to_thread(self._call_sync, system, user, temperature)
+
+    async def analyst(self, system_prompt: str, history: str) -> AgentResponse:
         user = f"""## Recent Attempt History
 {history}
 
 ## Your Task
-Analyze the last batch of results. Choose ONE attack template (A-H) from the program.
-Write a 3-sentence strategy for the next exploit.
-Output in this format:
+Analyze the results. Pick ONE attack template (A-H for sandbox, I-K for protocol).
+Write a 3-sentence strategy. Output in this format:
 
 TEMPLATE: [letter]
-REASON: [why this template, why now]
+REASON: [why this template now]
 STRATEGY: [precise 3-sentence exploitation plan]"""
 
-        raw = self._call(system_prompt, user, temperature=0.4)
+        raw = await self._call(system_prompt, user, temperature=0.4)
 
         resp = AgentResponse()
         resp.raw_response = raw
@@ -77,24 +83,26 @@ STRATEGY: [precise 3-sentence exploitation plan]"""
         resp.reasoning = _extract_field(raw, "REASON")
         resp.strategy = _extract_field(raw, "STRATEGY")
 
-        template_map = {"A": "DictReentry", "B": "SetReentry", "C": "SortCmp",
-                         "D": "MinMaxMutate", "E": "MemDrift", "F": "ConfigFiles",
-                         "G": "AllocRace", "H": "AsyncGC"}
+        template_map = {
+            "A": "DictReentry", "B": "SetReentry", "C": "SortCmp",
+            "D": "MinMaxMutate", "E": "MemDrift", "F": "ConfigFiles",
+            "G": "AllocRace", "H": "AsyncGC",
+            "I": "NameLookup", "J": "FutureChain", "K": "DoubleResume",
+        }
         resp.focus_area = template_map.get(resp.chosen_template[:1].upper(), "Exploration")
 
         return resp
 
-    def coder(self, system_prompt: str, template: str, strategy: str) -> AgentResponse:
-        """Coder role: given a template + strategy, generate exploit code."""
+    async def coder(self, system_prompt: str, template: str, strategy: str) -> AgentResponse:
         user = f"""## Selected Template: {template}
 ## Strategy: {strategy}
 
-Generate the Python exploit code for this template. Output ONLY a ```python block.
-Keep code under 80 lines. Use concise print() for output.
+Generate Python exploit code. Output ONLY a ```python block.
+Under 80 lines. Focus on the SPECIFIC vulnerability pattern.
 Do NOT use: class, del, yield, os.listdir, __builtins__, dir().
-Do NOT just probe paths — use the template's SPECIFIC vulnerability pattern."""
+Do NOT just probe paths — use the template's precise attack vector."""
 
-        raw = self._call(system_prompt, user, temperature=0.8)
+        raw = await self._call(system_prompt, user, temperature=0.8)
 
         resp = AgentResponse()
         resp.raw_response = raw
@@ -103,9 +111,8 @@ Do NOT just probe paths — use the template's SPECIFIC vulnerability pattern.""
         resp.strategy = strategy
         return resp
 
-    def meta_review(self, attempts_summary: str, score_counts: dict) -> AgentResponse:
-        """After each batch: review progress and suggest changes."""
-        system = "You are a meta-analyst. Review the last batch of hacking attempts and suggest improvements."
+    async def meta_review(self, attempts_summary: str, score_counts: dict) -> AgentResponse:
+        system = "You are a meta-analyst reviewing a batch of hacking attempts."
         user = f"""## Batch Results
 {attempts_summary}
 
@@ -113,48 +120,47 @@ Do NOT just probe paths — use the template's SPECIFIC vulnerability pattern.""
 {json.dumps(score_counts)}
 
 ## Your Task
-1. ASSESSMENT: What patterns are working? What's dead?
+1. ASSESSMENT: What's working? What's dead?
 2. DEAD_TEMPLATES: Which templates should be deprioritized? (list letters)
 3. SUGGESTION: What should the next batch focus on?"""
 
-        raw = self._call(system, user, temperature=0.3)
+        raw = await self._call(system, user, temperature=0.3)
 
         resp = AgentResponse()
         resp.raw_response = raw
         resp.assessment = _extract_field(raw, "ASSESSMENT")
         resp.suggested_changes = _extract_field(raw, "SUGGESTION")
-
-        dead = _extract_field(raw, "DEAD_TEMPLATES")
-        resp.confidence = dead
+        resp.confidence = _extract_field(raw, "DEAD_TEMPLATES")
         return resp
 
 
 def _extract_code(raw: str) -> str:
-    """Extract Python code from LLM response."""
     match = re.search(r"```(?:python)?\s*\n(.*?)```", raw, re.DOTALL)
     if match:
         return match.group(1).strip()
-
     lines = []
     in_code = False
     for line in raw.split("\n"):
-        stripped = line.strip()
-        if stripped.startswith(("import ", "from ", "def ", "try:", "print(", "#!")):
+        s = line.strip()
+        if s.startswith(("import ", "from ", "def ", "try:", "print(", "async ", "await ")):
             in_code = True
-        elif stripped.startswith("```"):
+        elif s.startswith("```"):
             continue
-        if in_code and stripped:
+        if in_code and s:
             lines.append(line)
     return "\n".join(lines).strip() if lines else raw.strip()
 
 
 def _extract_field(raw: str, field: str) -> str:
-    """Extract a labeled field from raw text."""
-    for pattern in [f"{field}:", f"{field.upper()}:", f"**{field}**"]:
+    for pat in [f"{field}:", f"{field.upper()}:", f"**{field}**"]:
         match = re.search(
-            rf"{re.escape(pattern)}\s*(.+?)(?:\n\s*\n|\n\s*[A-Z]{{2,}}:|\Z)",
+            rf"{re.escape(pat)}\s*(.+?)(?:\n\s*\n|\n\s*[A-Z]{{2,}}:|\Z)",
             raw, re.DOTALL | re.IGNORECASE
         )
         if match:
             return match.group(1).strip()[:500]
     return ""
+
+
+def code_hash(code: str) -> str:
+    return hashlib.blake2b(code.encode()).hexdigest()[:16]
