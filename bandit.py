@@ -33,8 +33,20 @@ class Bandit:
         self.code_hashes: dict[str, int] = {}
         self.ZERO_LIMIT = 10
         self.DEAD_COOLDOWN = 25
+        self._explore_idx = 0  # round-robin for unexplored templates
 
     def select(self) -> tuple[str, str]:
+        live = [l for l, s in self.stats.items()
+                if s["dead_until"] <= self.total_attempts]
+
+        # Round-robin through unexplored templates first
+        unexplored = [l for l in live if self.stats[l]["attempts"] == 0]
+        if unexplored:
+            idx = self._explore_idx % len(unexplored)
+            self._explore_idx += 1
+            return unexplored[idx], self.stats[unexplored[idx]]["name"]
+
+        # UCB1 bandit for explored templates
         best_ucb = -1.0
         best_letter = None
 
@@ -42,7 +54,7 @@ class Bandit:
             if s["dead_until"] > self.total_attempts:
                 continue
             if s["attempts"] == 0:
-                return letter, s["name"]
+                continue  # Already handled above
 
             mean = s["total_score"] / s["attempts"]
             exploration = math.sqrt(

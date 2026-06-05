@@ -186,13 +186,26 @@ async def worker(wid: int, agent: Agent, client: AsyncHackMontyClient,
             t = ar.chosen_template or template_letter
             s = ar.strategy or f"Execute {template_desc}"
 
-            # Coder
+            # Coder — retry up to 2x on validation failures
             cr = await agent.coder(system_prompt, t, s)
-            v = validate_code(cr.exploit_code)
-            if v:
-                cr = await agent.coder(system_prompt, t, s + f"\n\nCRITICAL: {v}")
-                if validate_code(cr.exploit_code):
-                    print(f"    [W{wid}] Validation still failing: {v}")
+            for retry in range(2):
+                v = validate_code(cr.exploit_code)
+                if not v:
+                    break
+                if retry == 0:
+                    cr = await agent.coder(
+                        system_prompt, t,
+                        s + f"\n\nCRITICAL: Previous code rejected — {v}. "
+                            f"Generate complete, valid Python code. No excuses, no empty output."
+                    )
+                else:
+                    cr = await agent.coder(
+                        system_prompt, t,
+                        s + f"\n\nFINAL ATTEMPT: Generate working Python code for this template. "
+                            f"Previous attempts failed validation. Output ONLY the code, nothing else."
+                    )
+            if validate_code(cr.exploit_code):
+                print(f"    [W{wid}] Code validation failed after retries, using anyway")
 
             # Run
             rr = await client.run_code(cr.exploit_code)

@@ -1,41 +1,54 @@
 # Hack Monty — Autonomous Sandbox Security Assessment
 
-An LLM-driven autonomous hacking loop targeting [Pydantic's $10,000 Hack Monty bounty](https://hackmonty.com). Built on the [autoresearch](https://github.com/karpathy/autoresearch) pattern — an agent generates, tests, and iterates on exploit attempts against a live Python sandbox honeypot.
+An LLM-driven autonomous hacking loop targeting [Pydantic's $10,000 Hack Monty bounty](https://hackmonty.com). Built on the [autoresearch](https://github.com/karpathy/autoresearch) pattern, evolved with XBOW-style parallelism and bandit selection.
 
 ## Architecture
 
 ```
-program.md          ──► Agent instructions + 8 source-code-derived attack templates
-orchestrator.py     ──► Main loop: analyst → coder → run → evaluate → meta-review
-agent.py            ──► qwen3.5:cloud via Ollama Cloud API (analyst/coder role split)
-hackmonty_client.py ──► hackmonty.com API client (snapshot/resume protocol)
-evaluate.py         ──► Strict 0-5 scoring system
-issue_tracker.py    ──► GitHub issue fetcher for pydantic/monty + dependencies
-notes/              ──► Structured research notebook (understanding, attempts, results)
+                      ┌──────────────────────────────────────┐
+                      │          orchestrator.py (v3)         │
+                      │          4-worker async swarm         │
+                      │                                      │
+program.md ──────────►│  ┌─worker 0──┐ ┌─worker 1──┐       │
+notes/ ──────────────►│  │ bandit→A  │ │ bandit→C  │  ...  │
+issue_tracker.py ────►│  │ →coder    │ │ →coder    │       │
+source_scanner.py ───►│  │ →run→eval │ │ →run→eval │       │
+                      │  │ →validate │ │ →validate │       │
+                      │  └───────────┘ └───────────┘       │
+                      │          │              │            │
+                      │     shared bandit + score_counts    │
+                      │     meta-review every 12 iterations  │
+                      └──────────────────────────────────────┘
 ```
 
-### Loop Flow
+### Loop Flow (per worker)
 
 ```
-1. analyst reviews history → picks best attack template + writes strategy
-2. coder generates exploit code from template + strategy
-3. run against hackmonty.com via snapshot/resume protocol
-4. evaluate result on 0-5 scale (strict, no false positives)
-5. meta-review every batch → kills dead templates, suggests focus shifts
-6. save attempt notes, update knowledge base
+1. bandit (UCB1) selects template with highest exploration/exploitation score
+2. analyst (minimax-m3:cloud) reviews history → writes 3-sentence strategy
+3. coder (minimax-m3:cloud) generates exploit from template + strategy
+4. POST to hackmonty.com → handle snapshot/resume chain
+5. evaluate on 0-5 scale with snapshot diff enrichment
+6. re-validate (3x re-run, ≥2/3 output hash match to confirm)
+7. bandit update with novelty penalty for near-duplicates
+8. meta-review every 12 iterations → kill dead templates
 ```
 
 ### Key Features
 
-- **Analyst/Coder Split**: Separate LLM calls for strategy (temp 0.4) and code generation (temp 0.8)
-- **Meta-Review**: After each batch, the system analyzes progress and deprioritizes dead-end templates
-- **Diversity Enforcement**: 8 consecutive zero-score attempts on a template → auto-killed for 20 cycles
-- **Precise Scoring**: No heuristic false positives — only `output` field from non-/data paths scores ≥4
-- **GitHub Issue Radar**: Fetches pydantic/monty + pydantic/pydantic-ai issues every 2 hours, categorizes by exploitability
+- **4-worker async swarm**: `asyncio.create_task` workers run in parallel via `httpx.AsyncClient` connection pool
+- **UCB1 bandit selection**: Math-driven template choice replaces LLM meta-review for picking; the LLM only provides tactical strategy within a template
+- **Re-validation**: Score ≥ 2 triggers 3x independent re-runs; flaky results demoted to score 1
+- **Novelty hashing**: blake2b hash of normalized code penalizes near-duplicate exploits
+- **Snapshot context enrichment**: Analyst sees allocation counts, snapshot kinds, and path denials — not just scores
+- **Analyst/Coder split**: Separate LLM calls for strategy (temp 0.4) and code generation (temp 0.8)
+- **Strict scoring**: No heuristic false positives — only `output` field from non-/data paths scores ≥ 4
+- **GitHub issue radar**: Fetches pydantic/monty + pydantic/pydantic-ai issues every 2 hours
+- **Source scanner**: Static analysis of monty Rust source — 41 unsafe blocks mapped across 4 files
 
 ## Attack Templates (Source-Code Audited)
 
-Each template is derived from a specific vulnerability in the [pydantic/monty](https://github.com/pydantic/monty) Rust source code:
+Templates A-H are derived from specific vulnerabilities in the [pydantic/monty](https://github.com/pydantic/monty) Rust source. Templates I-K probe the snapshot/resume protocol layer.
 
 | # | Template | Source | Vector |
 |---|----------|--------|--------|
@@ -47,6 +60,9 @@ Each template is derived from a specific vulnerability in the [pydantic/monty](h
 | F | Config files | `/data` mount | Read config.json, logs, docs for host info |
 | G | Alloc race | `sorting.rs` + `resource.rs` | Allocation exhaustion mid-sort state |
 | H | Async GC | `asyncio.rs:187-197` | gather futures GC during pending state |
+| I | Name lookup | Snapshot protocol | Resume name_lookup with crafted values |
+| J | Future chain | Snapshot protocol | Multi-level future snapshot chaining |
+| K | Double resume | Snapshot protocol | Same snapshot resumed 3× with different values |
 
 ## Quick Start
 
@@ -54,12 +70,16 @@ Each template is derived from a specific vulnerability in the [pydantic/monty](h
 # Install dependencies
 uv sync
 
-# Set Ollama API key (get from https://ollama.com/settings/keys)
+# Set credentials (API key from https://ollama.com/settings/keys)
 echo "OLLAMA_API_KEY=sk-..." > .env
-echo "USER_SECRET=cipher-zenith-quantum-drift-hm2026" >> .env
+echo "USER_SECRET=your-unique-passphrase" >> .env
 
-# Run the autonomous loop
-uv run python -B orchestrator.py --max-iterations 500 --batch-size 3
+# Run the autonomous swarm (4 workers, 500 iterations)
+OLLAMA_API_KEY=sk-... USER_SECRET=your-passphrase \
+  uv run python -B orchestrator.py --max-iterations 500 --workers 4
+
+# Run source scanner (one-time)
+uv run python -B source_scanner.py
 
 # Run snapshot protocol fuzzer
 uv run python -B fuzz_snapshots.py
@@ -67,31 +87,38 @@ uv run python -B fuzz_snapshots.py
 
 ## Results
 
-- **200+** exploit attempts across 3 orchestrator versions
+- **250+** exploit attempts across 3 orchestrator versions
 - **0** sandbox escapes found
-- **Confirmed**: Monty Round 2 is secure against Python-only attacks due to the absence of `class` support, which blocks all callback-based attack surfaces
-- **Documented**: 6 CPython divergence points, 15 Monty behavioral quirks, resource limits precisely mapped
-- **Audited**: Full dependency tree security advisories (Starlette: 8, Pydantic: 1)
-- **Full report**: See [REPORT.md](REPORT.md)
+- **Confirmed**: Monty Round 2 is secure against Python-only attacks — the absence of `class` support blocks all callback-based attack surfaces
+- **1 latent unsafe bug** found: `heap_read_boxed` provenance mismatch in RePattern handler
+- **43 unsafe blocks** audited across 100+ Rust source files
+- **9 GHSA advisories** reviewed across the dependency tree (all mitigated)
+- **6 CPython divergences** documented, 15 Monty behavioral quirks mapped
+- **Full report**: [REPORT.md](REPORT.md) | **Bounty submission**: [SUBMISSION.md](SUBMISSION.md)
 
 ## Structure
 
 ```
 .
-├── orchestrator.py        # Main loop (v2)
-├── agent.py               # Ollama client with role-split
-├── evaluate.py             # Scoring system
-├── hackmonty_client.py     # hackmonty.com API client
-├── issue_tracker.py        # GitHub issue fetcher
-├── fuzz_snapshots.py       # Snapshot protocol fuzzer
-├── program.md              # Agent instructions + templates
-├── REPORT.md               # Paper-level security assessment
-├── notes/                  # Research notebook
-│   ├── understanding/      # Knowledge base entries
-│   ├── attempts/           # Timestamped attempt logs
-│   └── results/            # Findings log
+├── orchestrator.py        # V3 async swarm (4 workers, bandit, re-validation)
+├── agent.py               # minimax-m3:cloud driver (analyst/coder/meta-review)
+├── bandit.py              # UCB1 template selection + novelty hashing
+├── evaluate.py            # 0-5 scoring + snapshot context enrichment
+├── hackmonty_client.py    # Sync + async API clients (snapshot/resume protocol)
+├── issue_tracker.py       # GitHub issue fetcher via gh CLI
+├── source_scanner.py      # Monty Rust source static analysis
+├── fuzz_snapshots.py      # Snapshot protocol fuzzer (44 boundary tests)
+├── exploit_campaign.py    # Second-order attack campaign suite
+├── program.md             # Agent instructions + 11 attack templates
+├── REPORT.md              # 12-section paper-level security assessment
+├── SUBMISSION.md          # Bounty submission (unsafe provenance bug)
+├── notes/
+│   ├── understanding/     # Knowledge base (heap, fs, builtins, GC, unsafe)
+│   ├── attempts/          # Timestamped attempt logs with auto-analysis
+│   ├── results/           # Findings log
+│   └── source_scan.json   # Automated unsafe block scan results
 ├── pyproject.toml
-├── LICENSE                 # MIT
+├── LICENSE                # MIT
 └── README.md
 ```
 
