@@ -21,7 +21,7 @@ from typing import Any
 
 OLLAMA_HOST = "https://ollama.com"
 ANALYST_MODEL = "minimax-m3:cloud"
-CODER_MODEL   = "deepseek-v4-flash:cloud"
+CODER_MODEL   = "qwen3.5:cloud"
 
 
 @dataclass
@@ -115,10 +115,12 @@ STRATEGY: [precise 3-sentence exploitation plan]"""
         user = f"""## Selected Template: {template}
 ## Strategy: {strategy}
 
-Generate ONLY Python exploit code inside triple backticks.
-Under 80 lines. Do NOT use: class, del, yield, os.listdir, __builtins__, dir()."""
+Generate Python exploit code. Output ONLY a ```python block.
+Under 80 lines. ONE template per attempt.
+Do NOT use: class, del, yield, os.listdir, __builtins__, dir().
+Keep code concise. Use simple print() for output."""
 
-        raw = await self._call(system_prompt, user, temperature=0.3, model=CODER_MODEL,
+        raw = await self._call(system_prompt, user, temperature=0.7, model=CODER_MODEL,
                                num_predict=2048)
 
         resp = AgentResponse()
