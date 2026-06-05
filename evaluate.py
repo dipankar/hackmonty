@@ -260,9 +260,25 @@ def enrich_context(result: RunResult) -> str:
                 parts.append(s.kind[:25])
 
     if result.error:
+        # Extract Python-level error type first (most common, least detailed)
+        py_err = re.search(r"(SyntaxError|NameError|TypeError|AttributeError|ValueError|"
+                           r"KeyError|ImportError|ModuleNotFoundError|IndexError|"
+                           r"ZeroDivisionError|RuntimeError|FileNotFoundError|"
+                           r"IsADirectoryError|NotADirectoryError|TimeoutError|"
+                           r"MemoryError|RecursionError|PermissionError|"
+                           r"NotImplementedError|AssertionError|OSError)"
+                           r"(?::\s*(.+?))?(?:\n|$)", result.error)
+        if py_err:
+            err_type = py_err.group(1)
+            err_msg = (py_err.group(2) or "")[:60].strip()
+            parts.append(f"{err_type}: {err_msg}" if err_msg else err_type)
+        else:
+            first_line = result.error.split('\n')[0][:80]
+            if first_line:
+                parts.append(first_line)
+
         alloc = re.search(r"allocation limit exceeded: (\d+) > (\d+)", result.error)
         mem = re.search(r"memory limit exceeded: (\d+) bytes > (\d+)", result.error)
-        recursion = re.search(r"RecursionError", result.error)
         perm = re.search(r"Permission denied: '([^']+)'", result.error)
         notimpl = re.search(r"NotImplementedError: (.+?)(?:\n|$)", result.error)
 
@@ -270,8 +286,6 @@ def enrich_context(result: RunResult) -> str:
             parts.append(f"alloc({alloc.group(1)}/{alloc.group(2)})")
         if mem:
             parts.append(f"mem({mem.group(1)}/{mem.group(2)})")
-        if recursion:
-            parts.append("RecursionError")
         if perm:
             parts.append(f"PermDenied({perm.group(1)[:60]})")
         if notimpl:

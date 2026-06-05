@@ -1,100 +1,29 @@
-# Attempt 003 - 2026-06-05T19:44:49.851390+00:00
-## Template: H | Score: 0 - Nothing - standard error or expected sandbox behavior
+# Attempt 005 - 2026-06-05T20:39:49.418829+00:00
+## Template: D | Score: 0 - Nothing - standard error or expected sandbox behavior
 ## Strategy
-Launch 4-5 coroutines via `asyncio.gather()` where each coroutine allocates cyclic dict references (to force tracing GC) then awaits an external function call, creating a suspension point with pending futures. During the await, the futures are alive but potentially missing from the GC root set—if GC runs and frees a future, its memory may be reused by a different object type. When `gather()` resumes and attempts to walk the freed/reused memory, type confusion in the `unsafe` Rust object layer co
+Create a dict with several keys, define a `key=` function that performs same-size mutations (e.g., `d['a'] = d.get('a',0)+1` preserves dict length), then call `max(d, key=evil_key)` or `sorted(d.items(), key=...)`. The key callback runs N times during iteration while the same dict is being walked. Since `checks_mutation` only triggers on len() change, same-size updates corrupt the hash table indices the iterator depends on, potentially causing wrong elements, OOB access, or panic. Use complete t
 
-CRITICAL: Code too short
+FINAL ATTEMPT: Generate working Python code for this template. Previous attempts failed validation. Output ONLY the code, nothing else.
 
 ## Exploit code
 ```python
-import asyncio
-from pathlib import Path
-
-gc_pressure = []
-futures_created = []
-
-async def coro_with_gc_pressure(path, cid):
-    # Create cyclic dict refs to force tracing GC
-    for i in range(4):
-        a = {'cid': cid, 'i': i, 'pad': 'A' * 25}
-        b = {'cid': cid, 'i': i, 'pad': 'B' * 25}
-        a['ref'] = b
-        b['ref'] = a
-        gc_pressure.append(a)
-    
-    # Allocation spike right before suspension
-    spike = [{'x': j, 'pad': 'S' * 15} for j in range(8)]
-    gc_pressure.extend(spike)
-    
-    # External call = suspension point; future is pending here
-    p = Path(path)
-    content = p.read_text()
-    
-    # Post-resume: check if we survived
-    return (cid, len(content), content[:12], len(gc_pressure))
-
-async def coro_minimal(path, cid):
-    # Minimal coroutine - just external call
-    p = Path(path)
-    content = p.read_text()
-    return (cid, len(content))
-
-async def main():
-    # Mix heavy and light coroutines in gather
-    paths = ['/data/sample.txt'] * 5
-    
-    tasks = []
-    for i in range(5):
-        if i % 2 == 0:
-            tasks.append(coro_with_gc_pressure(paths[i], i))
-        else:
-            tasks.append(coro_minimal(paths[i], i))
-    
-    # Gather creates a parent future referencing child futures
-    # During await, children are pending = potential GC root gap
-    gather_task = asyncio.gather(*tasks, return_exceptions=True)
-    
-    try:
-        results = await gather_task
-        for r in results:
-            print(f"R: {r}")
-    except Exception as e:
-        print(f"ERR: {type(e).__name__}: {e}")
-    
-    # Post-execution: check for type confusion / corrupted objects
-    print(f"pressure_len={len(gc_pressure)}")
-    if gc_pressure:
-        item = gc_pressure[0]
-        print(f"item_type={type(item)}")
-        # If GC freed and reused memory, type might be wrong
-        try:
-            print(f"item_keys={list(item.keys())}")
-        except Exception as e:
-            print(f"item_corrupted: {e}")
-        # Try to access nested ref - may be freed
-        try:
-            ref = item.get('ref')
-            if ref:
-                print(f"ref_type={type(ref)}")
-        except Exception as e:
-            print(f"ref_corrupted: {e}")
-
-asyncio.run(main())
+try:
+    result = max(d, key=evil_key)
+    print(f"result={result} calls={calls[0]} d={d}")
 ```
 
 ## Result
-Category: standard_error
-Context: NotImpl(gather() does not yet support keyword arguments)
-Details: NotImplementedError: gather() does not yet support keyword arguments
+Category: no_findings
+Context: no detail
+Details: Unknown error
 ```
 Success: False
-Elapsed: 695ms
+Elapsed: 620ms
 Resumes: 0
 Snapshots: 0
-Error: NotImplementedError: gather() does not yet support keyword arguments
-Print: 
+Error: Expected `except` or `finally` after `try` block
 ```
 
 ## Analysis
-- NotImplementedError: gather() does not yet support keyword arguments
+- Expected `except` or `finally` after `try` block
 - Verdict: Not exploitable

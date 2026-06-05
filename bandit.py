@@ -33,9 +33,12 @@ class Bandit:
         self.code_hashes: dict[str, int] = {}
         self.ZERO_LIMIT = 10
         self.DEAD_COOLDOWN = 25
-        self._explore_idx = 0  # round-robin for unexplored templates
+        self._explore_idx = 0
+        self._has_nonzero = False  # tracks if any template scored > 0
 
     def select(self) -> tuple[str, str]:
+        import random
+
         live = [l for l, s in self.stats.items()
                 if s["dead_until"] <= self.total_attempts]
 
@@ -45,6 +48,15 @@ class Bandit:
             idx = self._explore_idx % len(unexplored)
             self._explore_idx += 1
             return unexplored[idx], self.stats[unexplored[idx]]["name"]
+
+        # Early phase: epsilon-greedy when all scores are zero
+        if not self._has_nonzero and self.total_attempts > 0:
+            if random.random() < 0.7:
+                # Random pick among templates with fewest attempts (explore evenly)
+                min_attempts = min(self.stats[l]["attempts"] for l in live)
+                low_attempt = [l for l in live if self.stats[l]["attempts"] <= min_attempts + 2]
+                letter = random.choice(low_attempt)
+                return letter, self.stats[letter]["name"]
 
         # UCB1 bandit for explored templates
         best_ucb = -1.0
@@ -76,13 +88,14 @@ class Bandit:
         s["attempts"] += 1
         s["total_score"] += score
 
-        if score == 0:
+        if score > 0:
+            s["zero_streak"] = 0
+            self._has_nonzero = True
+        else:
             s["zero_streak"] += 1
             if s["zero_streak"] >= self.ZERO_LIMIT:
                 s["dead_until"] = self.total_attempts + self.DEAD_COOLDOWN
                 s["zero_streak"] = 0
-        else:
-            s["zero_streak"] = 0
 
         self.total_attempts += 1
 
