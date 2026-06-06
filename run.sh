@@ -10,22 +10,23 @@
 #   ./run.sh -i            # interactive REPL
 
 set -e
-cd "$(dirname "$0")"
+ABS_DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$ABS_DIR"
 export USER_SECRET="${USER_SECRET:-cipher-zenith-quantum-drift-hm2026}"
 
 TOKENWORM="${TOKENWORM_BIN:-/home/dipankar/Github/tokenworm/zig-out/bin/tokenworm}"
 
-if [ "$1" = "--interactive" ] || [ "$1" = "-i" ]; then
+if [ "${1:-}" = "-i" ] || [ "${1:-}" = "--interactive" ]; then
     exec "$TOKENWORM" \
-        --config-dir ./tokenworm \
-        --workspace . \
-        -p ollama \
+        --config-dir "$ABS_DIR/tokenworm" \
+        --workspace "$ABS_DIR" \
+        -p ollama_native \
         -i
 fi
 
 ITERATIONS="${1:-500}"
 exec "$TOKENWORM" \
-    --config-dir ./tokenworm \
-    --workspace . \
-    -p ollama \
+    --config-dir "$ABS_DIR/tokenworm" \
+    --workspace "$ABS_DIR" \
+    -p ollama_native \
     "/orchestrator $ITERATIONS"
