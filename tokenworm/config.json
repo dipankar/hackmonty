@@ -1,8 +1,11 @@
 {
-    "default_provider": "ollama",
+    "default_provider": "ollama_native",
     "providers": {
         "ollama": {
             "base_url": "http://localhost:11434/v1",
+            "model": "qwen3.5:cloud"
+        },
+        "ollama_native": {
             "model": "qwen3.5:cloud"
         }
     },
@@ -16,7 +19,9 @@
             "hackmonty": {
                 "command": "uv",
                 "args": [
-                    "run", "python", "-B",
+                    "run",
+                    "python",
+                    "-B",
                     "/home/dipankar/Github/hackmonty/hackmonty_mcp_server.py"
                 ],
                 "transport": "stdio",
