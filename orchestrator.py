@@ -47,6 +47,15 @@ TEMPLATES = [
 VALIDATION_KW = ("class ", "\ndel ", "yield ", " yield", "os.listdir")
 
 
+def syntax_check(code: str) -> str | None:
+    """Check if Python code can be compiled. Returns error message or None."""
+    try:
+        compile(code, "<exploit>", "exec")
+        return None
+    except SyntaxError as e:
+        return f"Python syntax error at line {e.lineno}: {e.msg}"
+
+
 def ensure_dirs():
     for d in [ATTEMPTS_DIR, UNDERSTANDING_DIR, RESULTS_DIR, ISSUES_DIR]:
         d.mkdir(parents=True, exist_ok=True)
@@ -186,26 +195,26 @@ async def worker(wid: int, agent: Agent, client: AsyncHackMontyClient,
             t = ar.chosen_template or template_letter
             s = ar.strategy or f"Execute {template_desc}"
 
-            # Coder — retry up to 2x on validation failures
+            # Coder — retry up to 3x, with syntax checking
             cr = await agent.coder(system_prompt, t, s)
-            for retry in range(2):
-                v = validate_code(cr.exploit_code)
-                if not v:
-                    break
-                if retry == 0:
+            for retry in range(3):
+                kw_err = validate_code(cr.exploit_code)
+                syn_err = syntax_check(cr.exploit_code) if not kw_err else None
+
+                if not kw_err and not syn_err:
+                    break  # Code is valid
+
+                err_msg = kw_err or syn_err
+                if retry < 2:
                     cr = await agent.coder(
                         system_prompt, t,
-                        s + f"\n\nCRITICAL: Previous code rejected — {v}. "
-                            f"Generate complete, valid Python code. No excuses, no empty output."
+                        s + f"\n\nCRITICAL: Code rejected — {err_msg}."
+                            f" Fix the error and regenerate. Output ONLY correct Python code."
                     )
                 else:
-                    cr = await agent.coder(
-                        system_prompt, t,
-                        s + f"\n\nFINAL ATTEMPT: Generate working Python code for this template. "
-                            f"Previous attempts failed validation. Output ONLY the code, nothing else."
-                    )
-            if validate_code(cr.exploit_code):
-                print(f"    [W{wid}] Code validation failed after retries, using anyway")
+                    print(f"    [W{wid}] Syntax validation failed after {retry + 1} retries: {err_msg}")
+            if validate_code(cr.exploit_code) or syntax_check(cr.exploit_code):
+                print(f"    [W{wid}] Using code with known issues, proceeding anyway")
 
             # Run
             rr = await client.run_code(cr.exploit_code)
