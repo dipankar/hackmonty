@@ -31,11 +31,10 @@ An LLM-driven autonomous hacking loop targeting [Pydantic's $10,000 Hack Monty b
 
 ### Production (tokenworm Zig binary)
 ```bash
-# Set credentials
-export OLLAMA_API_KEY=sk-...
+# Requires: ollama daemon running (ollama serve)
+# Cloud models work transparently — no pull needed
 export USER_SECRET=your-passphrase
 
-# Run the swarm
 ./run.sh            # 500 iterations
 ./run.sh 20         # 20 iterations (test)
 ./run.sh -i         # interactive REPL

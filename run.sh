@@ -1,17 +1,13 @@
 #!/bin/bash
 # Hack Monty — Autonomous Sandbox Security Assessment
 #
-# Production launcher using the tokenworm Zig binary with:
-#   - Native Ollama Cloud API provider
-#   - MCP stdio boundary tools
-#   - Bwrap sandbox (enabled)
-#   - Progress hooks for CLI logging
-#   - Self-contained config at ./tokenworm/config.json
+# Requires: ollama daemon running (ollama serve)
+# The daemon proxies cloud models automatically — no pull needed.
 #
 # Usage:
-#   ./run.sh              # 500 iterations (default)
+#   ./run.sh              # 500 iterations
 #   ./run.sh 20           # 20 iterations (test)
-#   ./run.sh --interactive # REPL mode
+#   ./run.sh -i            # interactive REPL
 
 set -e
 cd "$(dirname "$0")"
