@@ -309,9 +309,18 @@ def findings_read() -> str:
 # ── Main ──────────────────────────────────────────────────────
 
 def main():
+    import sys
     for d in [ATTEMPTS_DIR, RESULTS_DIR]:
         d.mkdir(parents=True, exist_ok=True)
-    mcp.run()
+
+    # SSE mode: `python hackmonty_mcp_server.py --sse [--port 8765]`
+    if "--sse" in sys.argv:
+        port_idx = sys.argv.index("--port") if "--port" in sys.argv else -1
+        port = int(sys.argv[port_idx + 1]) if port_idx >= 0 and port_idx + 1 < len(sys.argv) else 8765
+        print(f"[MCP] Starting SSE server on port {port}...", file=sys.stderr)
+        mcp.run(transport="sse", host="0.0.0.0", port=port)
+    else:
+        mcp.run()
 
 
 if __name__ == "__main__":

@@ -1,0 +1,37 @@
+{
+    "default_provider": "ollama",
+    "providers": {
+        "ollama": {
+            "base_url": "http://localhost:11434/v1",
+            "model": "qwen3.5:cloud"
+        }
+    },
+    "skills": {
+        "extra_dirs": [
+            "/home/dipankar/Github/hackmonty/skills"
+        ]
+    },
+    "mcp": {
+        "servers": {
+            "hackmonty": {
+                "command": "uv",
+                "args": [
+                    "run", "python", "-B",
+                    "/home/dipankar/Github/hackmonty/hackmonty_mcp_server.py"
+                ],
+                "transport": "stdio",
+                "auto_start": true,
+                "timeout_ms": 120000
+            }
+        }
+    },
+    "hooks": {
+        "on_iteration_start": "echo '{\"event\":\"iter\",\"n\":$ITERATION}'",
+        "on_tool_call_complete": "echo '{\"event\":\"tool\",\"name\":\"$TOOL_NAME\",\"ms\":$DURATION_MS}'",
+        "on_session_end": "echo '{\"event\":\"session_end\"}'"
+    },
+    "sandbox": {
+        "enabled": true,
+        "network": true
+    }
+}
