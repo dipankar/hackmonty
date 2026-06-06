@@ -1,31 +1,30 @@
-# Attempt 036 - 2026-06-05T20:49:47.654455+00:00
-## Template: F | Score: 0 - Nothing - standard error or expected sandbox behavior
+# Attempt 036 - 2026-06-05T21:45:53.250826+00:00
+## Template: A | Score: 0 - Nothing - standard error or expected sandbox behavior
 ## Strategy
-Read `/data/config.json` and `/data/current-config.json` (the symlink) with `Path.read_text()`, then probe subdirectories `/data/docs/`, `/data/i18n/`, `/data/logs/` for any file contents. Parse all recovered text for host paths, credentials, or references to `/app/secret.txt` or `/etc/secrets/hackmonth.txt`. If config contains absolute host paths or mount information, attempt path traversal using those discovered paths as anchors for the secret file.
+Execute Dict __eq__/__hash__ re-entry
 
 ## Exploit code
 ```python
-for target in ['/data/config.json', '/data/current-config.json']:
-    content = try_read(target)
-    if content:
-        results.append(f"--- {target} ---")
-        results.append(content[:2000])
+for cfg in ['config.json', 'current-config.json']:
+    try:
+        p = Path(f'/data/{cfg}')
+        if p.exists():
+            txt = p.read_text()
+            print(f"{cfg}: {txt[:100]}")
 ```
 
 ## Result
 Category: no_findings
-Context: func_snap(try_read); func_snap(try_read)
-Details: Completed with no notable findings
+Context: Expected `except` or `finally` after `try` block
+Details: Unknown error
 ```
-Success: True
-Elapsed: 820ms
-Resumes: 2
-Snapshots: 2
-  [0] kind=function_snapshot
-  [1] kind=function_snapshot
-Print: 
+Success: False
+Elapsed: 266ms
+Resumes: 0
+Snapshots: 0
+Error: Expected `except` or `finally` after `try` block
 ```
 
 ## Analysis
-- Completed with no findings
-- Verdict: Try different template
+- Expected `except` or `finally` after `try` block
+- Verdict: Not exploitable

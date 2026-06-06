@@ -1,32 +1,28 @@
-# Attempt 040 - 2026-06-05T20:50:09.044745+00:00
+# Attempt 040 - 2026-06-05T21:46:18.735097+00:00
 ## Template: C | Score: 0 - Nothing - standard error or expected sandbox behavior
 ## Strategy
-1. Write code with an undefined variable used in an expression
-2. When the name_lookup_snapshot fires, resume with a path object or large value
-3. The expression result appears in output
-
-CRITICAL: Previous code rejected — NO yield - not supported in Monty. Generate complete, valid Python code. No excuses, no empty output.
+Execute sort() py_cmp callback flood
 
 ## Exploit code
 ```python
-x = undefined_name + 1
-print(x)
+print(f"MemoryError: {e}")
+    try:
+        content = Path('/data/sample.txt').read_text()[:200]
+        print(f"Sample: {content[:100]}")
 ```
 
 ## Result
-Category: standard_error
-Context: name_lookup(undefined_name)
-Details: NameError: name 'undefined_name' is not defined
+Category: no_findings
+Context: Unexpected indentation
+Details: Unknown error
 ```
 Success: False
-Elapsed: 1013ms
-Resumes: 1
-Snapshots: 1
-Error: NameError: name 'undefined_name' is not defined
-  [0] kind=name_lookup_snapshot
-Print: 
+Elapsed: 296ms
+Resumes: 0
+Snapshots: 0
+Error: Unexpected indentation
 ```
 
 ## Analysis
-- NameError: name 'undefined_name' is not defined
+- Unexpected indentation
 - Verdict: Not exploitable

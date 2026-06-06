@@ -1,33 +1,32 @@
-# Attempt 068 - 2026-06-05T20:59:07.987633+00:00
+# Attempt 067 - 2026-06-05T21:53:56.993690+00:00
 ## Template: D | Score: 0 - Nothing - standard error or expected sandbox behavior
 ## Strategy
-1. Create a dict with 50+ entries (to make iteration take measurable time)
-2. Define a key function that, for each call, creates a cyclic reference (triggering tracing GC)
-3. The cyclic reference causes the GC to run
-4. If the dict's iterator is not in the GC root set, the dict gets freed
-5. The freed memory gets reused by the new cyclic object
-6. The iterator's next() call accesses freed memory -> type confusion -> potential code execution
-
-CRITICAL: Previous code rejected — NO os.listdir - not supported in Monty. Generate complete, valid Python code. No excuses, no empty output.
+Execute Set __hash__ re-entry during add
 
 ## Exploit code
 ```python
-d = {'a': 1, 'b': 2, 'c': 3}
-def evil_key(x):
+targets = ['/data/config.json', '/data/current-config.json', '/data/docs/README.md']
+for t in targets:
+    p = Path(t)
+    if p.exists():
+        content = p.read_text()[:150]
+        print(f"READ {t}: {content}")
 ```
 
 ## Result
-Category: no_findings
-Context: no detail
-Details: Unknown error
+Category: standard_error
+Context: func_snap(Path); AttributeError: 'NoneType' object has no attribute 'exists'
+Details: AttributeError: 'NoneType' object has no attribute 'exists'
 ```
 Success: False
-Elapsed: 895ms
-Resumes: 0
-Snapshots: 0
-Error: Expected an indented block after function definition
+Elapsed: 598ms
+Resumes: 1
+Snapshots: 1
+Error: AttributeError: 'NoneType' object has no attribute 'exists'
+  [0] kind=function_snapshot
+Print: 
 ```
 
 ## Analysis
-- Expected an indented block after function definition
+- AttributeError: 'NoneType' object has no attribute 'exists'
 - Verdict: Not exploitable

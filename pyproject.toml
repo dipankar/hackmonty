@@ -6,6 +6,7 @@ requires-python = ">=3.12"
 dependencies = [
     "httpx>=0.28",
     "logfire>=4.35.0",
+    "mcp>=1.27.2",
     "ollama>=0.4",
 ]
 

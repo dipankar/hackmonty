@@ -1,27 +1,29 @@
-# Attempt 094 - 2026-06-05T21:06:57.692988+00:00
-## Template: I | Score: 0 - Nothing - standard error or expected sandbox behavior
+# Attempt 093 - 2026-06-05T22:01:47.015222+00:00
+## Template: H | Score: 0 - Nothing - standard error or expected sandbox behavior
 ## Strategy
-We will write code that references an undefined variable inside a non-print expression context (e.g., `undefined_name + 0` or `len(undefined_name)`) to trigger a `name_lookup_snapshot` rather than a `NameError`. The test harness will resume the snapshot with three crafted values: (1) a `pathlib.Path` object pointing to `/etc/secrets/hackmonth.txt`, (2) an oversized string designed to test memory limit handling during name resolution, and (3) a deeply nested dict to test type confusion. If the VM
+Create an `async main()` that uses `asyncio.gather()` with 3-4 coroutines, each allocating ~150 dict objects with string padding to consume allocations mid-gather. Inside each coroutine, yield control (`await asyncio.sleep(0)`) after partial allocation so the event loop can interleave coroutines while the gather future is still building. If the gather's internal state machine or future coroutine references aren't in the GC root set, one coroutine's frame may be freed prematurely, leading to a us
 
 ## Exploit code
 ```python
-try:
-    result = str(injected) + "_modified"
-    print(result[:200])
+local_allocs = []
+    for i in range(iterations):
+        obj = {'worker': id, 'iter': i, 'pad': 'X' * 40}
+        local_allocs.append(obj)
+        alloc_pool.append(obj)
 ```
 
 ## Result
 Category: no_findings
-Context: no detail
+Context: Unexpected indentation
 Details: Unknown error
 ```
 Success: False
-Elapsed: 299ms
+Elapsed: 616ms
 Resumes: 0
 Snapshots: 0
-Error: Expected `except` or `finally` after `try` block
+Error: Unexpected indentation
 ```
 
 ## Analysis
-- Expected `except` or `finally` after `try` block
+- Unexpected indentation
 - Verdict: Not exploitable

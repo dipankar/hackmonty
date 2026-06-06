@@ -1,27 +1,35 @@
-# Attempt 050 - 2026-06-05T20:53:09.576418+00:00
-## Template: H | Score: 0 - Nothing - standard error or expected sandbox behavior
+# Attempt 049 - 2026-06-05T21:48:02.374277+00:00
+## Template: [letter] / REASON: / STRATEGY:". | Score: 0 - Nothing - standard error or expected sandbox behavior
 ## Strategy
-Create 3-5 coroutines that each allocate 200+ cyclic dict objects (reference cycles to force tracing GC) then `await` an external function call (e.g., `await asyncio.sleep(0)` or a name lookup) which triggers a snapshot. The external call snapshot pauses execution mid-`gather`, and if the GC runs during this pause while the future/awaiter objects are not in the root set, a use-after-free may corrupt coroutine state. Upon resume, check if any coroutine's local variables reference freed memory tha
+".
 
 ## Exploit code
 ```python
-for i in range(50):
-        a = {}
-        b = {}
+print("=== Config Probe ===")
+for cfg in configs:
+    p = Path(cfg)
+    content = read_safe(p)
+    if content:
+        print(f"[+] {cfg}")
 ```
 
 ## Result
-Category: no_findings
-Context: no detail
-Details: Completed with no notable findings
+Category: standard_error
+Context: name_lookup(configs); NameError: name 'configs' is not defined
+Details: NameError: name 'configs' is not defined
 ```
-Success: True
-Elapsed: 696ms
-Resumes: 0
-Snapshots: 0
-Print: 
+Success: False
+Elapsed: 557ms
+Resumes: 1
+Snapshots: 1
+Error: NameError: name 'configs' is not defined
+  [0] kind=name_lookup_snapshot
+      stdout: === Config Probe ===
+
+Print: === Config Probe ===
+
 ```
 
 ## Analysis
-- Completed with no findings
-- Verdict: Try different template
+- NameError: name 'configs' is not defined
+- Verdict: Not exploitable

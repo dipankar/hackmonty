@@ -1,32 +1,31 @@
-# Attempt 070 - 2026-06-05T21:00:07.265964+00:00
-## Template: I | Score: 0 - Nothing - standard error or expected sandbox behavior
+# Attempt 069 - 2026-06-05T21:54:31.376127+00:00
+## Template: B | Score: 0 - Nothing - standard error or expected sandbox behavior
 ## Strategy
-1. Write code that calls open() with a variable: `f = open(path_var, 'r')`
-2. First, reference `path_var` to trigger name_lookup
-3. Resume with "/data/sample.txt" (valid) - confirm it works
-4. In a new execution, trigger name_lookup for `path_var`
-5. Resume with "/etc/secrets/hackmonth.txt" - if the VM trusts the injected value...
+Execute Set __hash__ re-entry during add
 
 ## Exploit code
 ```python
-f = open(path_var, 'r')
-print(f.read())
+if corruption:
+        try:
+            for target in ['/data/config.json', '/data/current-config.json']:
+                p = Path(target)
+                if p.exists():
+                    content = p.read_text()
+                    print(f"LEAK[{target[:20]}]: {content[:150]}")
 ```
 
 ## Result
-Category: standard_error
-Context: name_lookup(path_var)
-Details: NameError: name 'path_var' is not defined
+Category: no_findings
+Context: Expected `except` or `finally` after `try` block
+Details: Unknown error
 ```
 Success: False
-Elapsed: 612ms
-Resumes: 1
-Snapshots: 1
-Error: NameError: name 'path_var' is not defined
-  [0] kind=name_lookup_snapshot
-Print: 
+Elapsed: 387ms
+Resumes: 0
+Snapshots: 0
+Error: Expected `except` or `finally` after `try` block
 ```
 
 ## Analysis
-- NameError: name 'path_var' is not defined
+- Expected `except` or `finally` after `try` block
 - Verdict: Not exploitable

@@ -1,27 +1,23 @@
-# Attempt 053 - 2026-06-05T20:54:42.891069+00:00
-## Template: F | Score: 0 - Nothing - standard error or expected sandbox behavior
+# Attempt 053 - 2026-06-05T21:49:43.354426+00:00
+## Template: C | Score: 0 - Nothing - standard error or expected sandbox behavior
 ## Strategy
-First, enumerate all files in /data using Path.rglob to find all readable files. Then specifically check if current-config.json is a symlink using Path.is_symlink() and try to read it. Use Path.resolve() to follow
+Create a list of ~100 comparable elements, then call `sorted()` with a `key=` function that allocates 3-5 new objects per call — this burns ~3,000-4,000 allocations during the sort's key pre-computation phase. Time the remaining budget carefully so the allocation counter hits 5,000 mid-sort, causing `MemoryError` to fire while the sort's internal permutation/indices vector is mid-update, leaving the output list in a corrupted state. The key advantage is this path doesn't require `class` or `del`
 
 ## Exploit code
 ```python
-cfg = base / 'config.json'
-cc = base / 'current-config.json'
-print(f'cfg:{cfg.read_text()[:500]}')
-print(f'cc_islink:{cc.is_symlink()}')
-try:
-    resolved = cc.resolve()
-    print(f'cc_resolved:{resolved}')
-    print(f'cc_resolved_text:{resolved.read_text()[:500]}')
+for p in ['/data/config.json', '/data/sample.txt', '/data/current-config.json']:
+        try:
+            c = Path(p).read_text()[:180]
+            print(f"{p}: {c}")
 ```
 
 ## Result
 Category: no_findings
-Context: no detail
+Context: Expected `except` or `finally` after `try` block
 Details: Unknown error
 ```
 Success: False
-Elapsed: 263ms
+Elapsed: 625ms
 Resumes: 0
 Snapshots: 0
 Error: Expected `except` or `finally` after `try` block

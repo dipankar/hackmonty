@@ -1,33 +1,35 @@
-# Attempt 127 - 2026-06-05T21:16:02.378246+00:00
-## Template: F | Score: 0 - Nothing - standard error or expected sandbox behavior
+# Attempt 124 - 2026-06-05T22:10:59.063672+00:00
+## Template: J | Score: 0 - Nothing - standard error or expected sandbox behavior
 ## Strategy
-Use `pathlib.Path` to enumerate and read all accessible files under `/data/` including `config.json`, `current-config.json` (following the symlink), and scan subdirectories `docs/`, `i18n/`, `logs/` for text files. Extract any strings containing `/app`, `/etc`, `secret`, or host paths from the contents. Also probe `Path('/data/sample.txt')` which is mentioned as available. If config files contain absolute host paths, use those to attempt reading the actual secret file via `open()` or `Path.read_
+1. Allocate objects at specific sizes
+2. Free some - counter should drop by freed size
+3. If deallocation size is overestimated, counter drops more than actual memory freed
+4. This creates "ghost memory" - allocations that don't count against limit
+5. Use headroom to allocate larger buffers for file reads
 
 ## Exploit code
 ```python
-for t in targets:
-    p = Path(t)
-    try:
-        if p.is_file():
-            c = p.read_text()
-            found.append((t, c))
-            for kw in ['/app', '/etc', 'secret', 'hackmonth', 'SECRE']:
-                if kw in c:
-                    found.append((f"KW:{kw}", c))
+found = []
+    for path in targets:
+        try:
+            p = Path(path)
+            if p.exists():
+                content = p.read_text()[:150]
+                found.append(f"OK {path}: {content[:60]}")
 ```
 
 ## Result
 Category: no_findings
-Context: no detail
+Context: Unexpected indentation
 Details: Unknown error
 ```
 Success: False
-Elapsed: 326ms
+Elapsed: 292ms
 Resumes: 0
 Snapshots: 0
-Error: Expected `except` or `finally` after `try` block
+Error: Unexpected indentation
 ```
 
 ## Analysis
-- Expected `except` or `finally` after `try` block
+- Unexpected indentation
 - Verdict: Not exploitable

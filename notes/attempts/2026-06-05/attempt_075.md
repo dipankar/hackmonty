@@ -1,28 +1,30 @@
-# Attempt 074 - 2026-06-05T21:01:18.330886+00:00
-## Template: D | Score: 0 - Nothing - standard error or expected sandbox behavior
+# Attempt 074 - 2026-06-05T21:55:49.306830+00:00
+## Template: **Template O: __eq__ via tuple comparison in dict membership** - In Python, when you do `key in dict` or `dict[key]`, Python calls `hash(key)` and then `key == existing_key` for each candidate. In Monty, `py_eq` on tuples calls `__eq__` on elements. If one of those elements is a mutable container (like a list), and we can somehow make the list's equality comparison cause a side effect... | Score: 0 - Nothing - standard error or expected sandbox behavior
 ## Strategy
-Create a dict with several entries and define a key function that creates cyclic references, triggering tracing GC during min/max iteration. The key insight is that the dict is iterated via internal Rust code that may not include the dict in the GC root set during the key callback. If the dict is freed, the iterator holds a dangling reference, and subsequent access causes a use-after-free. We can detect this by observing whether
+Execute sort() py_cmp callback flood
 
 ## Exploit code
 ```python
-c = []
-    d_list = []
-    c.append(d_list)
-    d_list.append(c)
+for p in config_paths:
+    try:
+        path = Path(p)
+        if path.exists():
+            content = path.read_text()[:500]
+            results.append(f"{p}: {content[:200]}")
 ```
 
 ## Result
 Category: no_findings
-Context: no detail
+Context: Expected `except` or `finally` after `try` block
 Details: Unknown error
 ```
 Success: False
-Elapsed: 305ms
+Elapsed: 381ms
 Resumes: 0
 Snapshots: 0
-Error: Unexpected indentation
+Error: Expected `except` or `finally` after `try` block
 ```
 
 ## Analysis
-- Unexpected indentation
+- Expected `except` or `finally` after `try` block
 - Verdict: Not exploitable

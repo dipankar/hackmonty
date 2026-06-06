@@ -1,26 +1,33 @@
-# Attempt 027 - 2026-06-05T20:46:22.528733+00:00
-## Template: "3. Expression results appear in the output field" | Score: 0 - Nothing - standard error or expected sandbox behavior
+# Attempt 027 - 2026-06-05T21:42:03.847919+00:00
+## Template: J | Score: 0 - Nothing - standard error or expected sandbox behavior
 ## Strategy
-Execute Set __hash__ re-entry during add
+Execute Future snapshot chaining
 
 ## Exploit code
 ```python
-# dict comparison triggers __eq__ on key objects
-# Use a list inside a tuple as key - list is hashable? (not in CPython, but Monty may differ)
+def main():
+    print("=== Future Chain Test ===")
+    loop = asyncio.new_event_loop()
+    try:
+        all_results = loop.run_until_complete(run_chained_futures())
+        print(f"Completed: {len(all_results)} chains")
+        for i, r in enumerate(all_results[:5]):
+            if isinstance(r, Exception):
+                print(f"[{i}] EXC: {type(r).__name__}")
 ```
 
 ## Result
 Category: no_findings
-Context: no detail
-Details: Completed with no notable findings
+Context: Expected `except` or `finally` after `try` block
+Details: Unknown error
 ```
-Success: True
-Elapsed: 637ms
+Success: False
+Elapsed: 281ms
 Resumes: 0
 Snapshots: 0
-Print: 
+Error: Expected `except` or `finally` after `try` block
 ```
 
 ## Analysis
-- Completed with no findings
-- Verdict: Try different template
+- Expected `except` or `finally` after `try` block
+- Verdict: Not exploitable

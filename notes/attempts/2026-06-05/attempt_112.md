@@ -1,32 +1,28 @@
-# Attempt 112 - 2026-06-05T21:12:05.612373+00:00
-## Template: F | Score: 0 - Nothing - standard error or expected sandbox behavior
+# Attempt 111 - 2026-06-05T22:07:07.320701+00:00
+## Template: K | Score: 0 - Nothing - standard error or expected sandbox behavior
 ## Strategy
-Use `pathlib.Path` to enumerate and read files in `/data`—specifically `config.json`, `current-config.json` (symlink), any files in `/data/docs/`, `/data/i18n/`, and `/data/logs/`—and print their contents to see if they leak host paths, credentials, or references to the secret location. Also attempt to resolve the `current-config.json` symlink with `Path('/data/current-config.json').read_text()` and try reading `/data/sample.txt` for any embedded hints about the real filesystem layout.
-```python
+Execute Double-resume state machine
 
 ## Exploit code
 ```python
-results = []
-for t in targets:
-    c = read_file(t)
-    if c is not None:
-        results.append(f"{t}: {c[:500]}")
+try:
+        r = {'type': type(x).__name__, 'len': len(str(x)) if hasattr(x, '__str__') else 0}
+        if isinstance(x, str) and '/' in x:
+            p = Path(x)
 ```
 
 ## Result
-Category: standard_error
-Context: name_lookup(targets)
-Details: NameError: name 'targets' is not defined
+Category: no_findings
+Context: Expected `except` or `finally` after `try` block
+Details: Unknown error
 ```
 Success: False
-Elapsed: 618ms
-Resumes: 1
-Snapshots: 1
-Error: NameError: name 'targets' is not defined
-  [0] kind=name_lookup_snapshot
-Print: 
+Elapsed: 300ms
+Resumes: 0
+Snapshots: 0
+Error: Expected `except` or `finally` after `try` block
 ```
 
 ## Analysis
-- NameError: name 'targets' is not defined
+- Expected `except` or `finally` after `try` block
 - Verdict: Not exploitable

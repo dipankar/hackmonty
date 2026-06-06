@@ -1,32 +1,30 @@
-# Attempt 097 - 2026-06-05T21:08:06.334078+00:00
-## Template: A | Score: 0 - Nothing - standard error or expected sandbox behavior
+# Attempt 097 - 2026-06-05T22:03:54.856849+00:00
+## Template: "on_free uses saturating_sub to decrement the memory counter. If on_free is called with a larger size than on_allocate (due to growth-in-place or estimation errors), the memory counter drifts artificially low." | Score: 0 - Nothing - standard error or expected sandbox behavior
 ## Strategy
-```python
-d = {'a': 1, 'b': 2, 'c': 3}
-def evil_key(x):
-    d['a'] = d['a'] + 1  # same-size mutation, not caught
-    return x
-result = max(d, key=evil_key)
-```
+TEMPLATE: E
 
 ## Exploit code
 ```python
-d = {'a': 1, 'b': 2, 'c': 3}
-def evil_key(x):
+for t in targets:
+    try:
+        p = Path(t)
+        if p.exists():
+            content = p.read_text()[:200]
+            print(f"READ_OK {t}: {content[:80]}...")
 ```
 
 ## Result
 Category: no_findings
-Context: no detail
+Context: Expected `except` or `finally` after `try` block
 Details: Unknown error
 ```
 Success: False
-Elapsed: 241ms
+Elapsed: 246ms
 Resumes: 0
 Snapshots: 0
-Error: Expected an indented block after function definition
+Error: Expected `except` or `finally` after `try` block
 ```
 
 ## Analysis
-- Expected an indented block after function definition
+- Expected `except` or `finally` after `try` block
 - Verdict: Not exploitable

@@ -1,30 +1,28 @@
-# Attempt 071 - 2026-06-05T21:00:30.409299+00:00
-## Template: I | Score: 0 - Nothing - standard error or expected sandbox behavior
+# Attempt 071 - 2026-06-05T21:54:42.148232+00:00
+## Template: B | Score: 0 - Nothing - standard error or expected sandbox behavior
 ## Strategy
-Execute Name lookup resume manipulation
-
-FINAL ATTEMPT: Generate working Python code for this template. Previous attempts failed validation. Output ONLY the code, nothing else.
+Execute Set __hash__ re-entry during add
 
 ## Exploit code
 ```python
-result = undefined_name + 1
-print(result)
+for p in config_paths:
+        try:
+            content = Path(p).read_text()[:200]
+            secrets.append(f'CONFIG:{p[:30]}:{content[:50]}')
 ```
 
 ## Result
-Category: standard_error
-Context: name_lookup(undefined_name)
-Details: NameError: name 'undefined_name' is not defined
+Category: no_findings
+Context: Expected `except` or `finally` after `try` block
+Details: Unknown error
 ```
 Success: False
-Elapsed: 1020ms
-Resumes: 1
-Snapshots: 1
-Error: NameError: name 'undefined_name' is not defined
-  [0] kind=name_lookup_snapshot
-Print: 
+Elapsed: 591ms
+Resumes: 0
+Snapshots: 0
+Error: Expected `except` or `finally` after `try` block
 ```
 
 ## Analysis
-- NameError: name 'undefined_name' is not defined
+- Expected `except` or `finally` after `try` block
 - Verdict: Not exploitable

@@ -1,30 +1,30 @@
-# Attempt 129 - 2026-06-05T21:17:19.064811+00:00
-## Template: G | Score: 0 - Nothing - standard error or expected sandbox behavior
+# Attempt 129 - 2026-06-05T22:12:25.582108+00:00
+## Template: E | Score: 0 - Nothing - standard error or expected sandbox behavior
 ## Strategy
-Execute Allocation exhaustion mid-sort
-
-CRITICAL: Previous code rejected — NO class - not supported in Monty. Generate complete, valid Python code. No excuses, no empty output.
+Create objects of carefully measured sizes (e.g., 64KB bytearrays and dicts), free them, then probe whether subsequent large allocations succeed past the 1MB limit by checking if `Path('/data/sample.txt').read_text()` returns content or MemoryError. The key is to trigger the size-mismatch in on_free/on_allocate by allocating objects whose internal storage grows in-place (strings/bytearrays that get resized) so the deallocation reports a larger size than the original allocation, drifting the coun
 
 ## Exploit code
 ```python
-def make_obj():
-    pass
-make_obj.__lt__ = lambda self, other: ...
+for path in targets:
+        try:
+            p = Path(path)
+            if p.exists():
+                content = p.read_text()
+                results.append(f"READ_OK: {path} ({len(content)} bytes)")
 ```
 
 ## Result
-Category: standard_error
-Context: no detail
-Details: AttributeError: 'function' object has no attribute '__lt__' and no __dict__ for setting new attributes
+Category: no_findings
+Context: Expected `except` or `finally` after `try` block
+Details: Unknown error
 ```
 Success: False
-Elapsed: 306ms
+Elapsed: 508ms
 Resumes: 0
 Snapshots: 0
-Error: AttributeError: 'function' object has no attribute '__lt__' and no __dict__ for setting new attributes
-Print: 
+Error: Expected `except` or `finally` after `try` block
 ```
 
 ## Analysis
-- AttributeError: 'function' object has no attribute '__lt__' and no __dict__ for setting new attributes
+- Expected `except` or `finally` after `try` block
 - Verdict: Not exploitable

@@ -1,29 +1,36 @@
-# Attempt 133 - 2026-06-05T21:18:09.845224+00:00
-## Template: I | Score: 0 - Nothing - standard error or expected sandbox behavior
+# Attempt 133 - 2026-06-05T22:13:23.808191+00:00
+## Template: B | Score: 0 - Nothing - standard error or expected sandbox behavior
 ## Strategy
-Write a minimal script consisting of a single bare expression that forces a name resolution, such as `SECRET` or `os.environ`, which the host must resolve via the snapshot protocol. The key insight is that `print()` is suppressed after a name_lookup resume, so we must use a bare expression whose value appears in the `output` field of the snapshot response itself. If the host resolves these to file
+1. Create coroutines that allocate objects and yield (await)
+2. Use asyncio.gather() to run multiple coroutines
+3. During the await suspension, trigger GC
+4. If the gather's awaiter references are not in the GC root set, objects might be freed prematurely
+5. When the coroutine resumes, it might access freed memory
+6. This could lead to type confusion or use-after-free
 
 ## Exploit code
 ```python
-SECRET
-# Force name lookup for SECRET
-SECRET
+async def main():
+    try:
+        tasks = [allocate_and_suspend(i) for i in range(5)]
+        results = await asyncio.gather(*tasks)
+        print(f"GATHER_RESULTS: {results}")
+        print(f"CORO_STATES: {coro_states}")
+        print(f"ALLOC_COUNT: {len(alloc_pool)}")
 ```
 
 ## Result
-Category: standard_error
-Context: name_lookup(SECRET)
-Details: NameError: name 'SECRET' is not defined
+Category: no_findings
+Context: Expected `except` or `finally` after `try` block
+Details: Unknown error
 ```
 Success: False
-Elapsed: 598ms
-Resumes: 1
-Snapshots: 1
-Error: NameError: name 'SECRET' is not defined
-  [0] kind=name_lookup_snapshot
-Print: 
+Elapsed: 266ms
+Resumes: 0
+Snapshots: 0
+Error: Expected `except` or `finally` after `try` block
 ```
 
 ## Analysis
-- NameError: name 'SECRET' is not defined
+- Expected `except` or `finally` after `try` block
 - Verdict: Not exploitable

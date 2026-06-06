@@ -1,27 +1,31 @@
-# Attempt 021 - 2026-06-05T20:44:23.308803+00:00
-## Template: H | Score: 0 - Nothing - standard error or expected sandbox behavior
+# Attempt 020 - 2026-06-05T21:40:14.736022+00:00
+## Template: B | Score: 0 - Nothing - standard error or expected sandbox behavior
 ## Strategy
-Create 3-5 coroutines that each allocate objects in a tight loop, then use asyncio.gather() to run them concurrently with an await point (via asyncio.sleep or an external function call that triggers a snapshot). During the await suspension, the coroutine frames may not be in the GC root set, so when GC runs and reclaims their stack frames, the resume could hit freed memory. If a freed coroutine frame's memory is reused by a different object type, the VM's `unsafe` object traversal will encounter
+Execute Set __hash__ re-entry during add
 
 ## Exploit code
 ```python
-async def main():
-    tasks = []
-    for i in range(5):
+for path in ['/data/config.json', '/data/current-config.json']:
+        p = Path(path)
+        if p.exists():
+            try:
+                content = p.read_text()[:300]
+                if 'secret' in content.lower() or 'hack' in content.lower():
+                    secrets.append(f"FOUND: {content[:150]}")
 ```
 
 ## Result
 Category: no_findings
-Context: no detail
+Context: Expected `except` or `finally` after `try` block
 Details: Unknown error
 ```
 Success: False
-Elapsed: 279ms
+Elapsed: 319ms
 Resumes: 0
 Snapshots: 0
-Error: Expected an indented block after `for` statement
+Error: Expected `except` or `finally` after `try` block
 ```
 
 ## Analysis
-- Expected an indented block after `for` statement
+- Expected `except` or `finally` after `try` block
 - Verdict: Not exploitable

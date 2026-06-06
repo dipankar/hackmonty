@@ -1,28 +1,28 @@
-# Attempt 057 - 2026-06-05T20:55:33.753461+00:00
-## Template: D | Score: 0 - Nothing - standard error or expected sandbox behavior
+# Attempt 056 - 2026-06-05T21:49:47.439416+00:00
+## Template: J | Score: 0 - Nothing - standard error or expected sandbox behavior
 ## Strategy
-Create a dict with many keys, then call `max(dict, key=evil_key)` where `evil_key` performs same-size mutations (updating existing values, swapping key-value pairs) during each key callback invocation. Since `checks_mutation` only catches size changes, the iterator will walk stale entries and potentially return a key that maps to freed/corrupted memory. Additionally, craft a variant where `sorted()` with a key callback reorders the dict in-place using same-size mutations to confuse the sort's in
+Execute Future snapshot chaining
 
 ## Exploit code
 ```python
-def sort_key(x):
-    c = mut_count[0]
-    if c < 30:
-        idx = c % 50
+results.append("L2_START")
+    r3 = await level3()
+    results.append("L2_GOT_L3")
+    future_chain.append(r3)
 ```
 
 ## Result
 Category: no_findings
-Context: no detail
-Details: Completed with no notable findings
+Context: Unexpected indentation
+Details: Unknown error
 ```
-Success: True
-Elapsed: 611ms
+Success: False
+Elapsed: 511ms
 Resumes: 0
 Snapshots: 0
-Print: 
+Error: Unexpected indentation
 ```
 
 ## Analysis
-- Completed with no findings
-- Verdict: Try different template
+- Unexpected indentation
+- Verdict: Not exploitable
