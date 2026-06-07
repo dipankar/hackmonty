@@ -24,6 +24,10 @@ venv/
 .DS_Store
 Thumbs.db
 
-# Project data (committed notes are intentional)
-data/*.json
-data/*.log
+# Project data
+notes/knowledge.db
+notes/knowledge.md
+notes/state.json
+notes/source_scan.json
+notes/issues/
+__pycache__/

@@ -7,7 +7,7 @@ Communication via stdio JSON-RPC.
 
 from __future__ import annotations
 
-import json, os, sys, asyncio
+import json, os, sys, asyncio, sqlite3
 from pathlib import Path
 from typing import Any
 
@@ -18,54 +18,94 @@ NOTES_DIR = PROJECT_DIR / "notes"
 ATTEMPTS_DIR = NOTES_DIR / "attempts"
 RESULTS_DIR = NOTES_DIR / "results"
 STATE_FILE = NOTES_DIR / "state.json"
+KG_DB = NOTES_DIR / "knowledge.db"
 
 mcp = FastMCP("hackmonty-mcp")
 
 
-# ── Lazy helpers ───────────────────────────────────────────────
+# ── Knowledge Graph SQLite Backend ──────────────────────────────
 
-_bandit = None
-_bandit_total = 0
+def _kg_connect():
+    """Get a connection to the knowledge graph database."""
+    db = sqlite3.connect(str(KG_DB))
+    db.row_factory = sqlite3.Row
+    return db
 
-def _get_bandit():
-    global _bandit, _bandit_total
-    if _bandit is None:
-        import bandit as _b
-        _bandit = _b.Bandit(templates=_TEMPLATES)
-        if STATE_FILE.exists():
-            try:
-                s = json.loads(STATE_FILE.read_text())
-                _bandit_total = s.get("bandit_total", 0)
-                _bandit.total_attempts = _bandit_total
-            except: pass
-    return _bandit
+def _kg_init():
+    """Initialize knowledge graph schema."""
+    db = _kg_connect()
+    db.executescript("""
+        CREATE TABLE IF NOT EXISTS attempts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            iteration INTEGER NOT NULL,
+            vector TEXT NOT NULL,
+            template TEXT DEFAULT '',
+            code TEXT NOT NULL DEFAULT '',
+            score INTEGER NOT NULL DEFAULT 0,
+            label TEXT DEFAULT '',
+            context TEXT DEFAULT '',
+            reason TEXT NOT NULL DEFAULT '',
+            snapshot_kinds TEXT DEFAULT '[]',
+            timestamp TEXT DEFAULT (datetime('now'))
+        );
+        CREATE TABLE IF NOT EXISTS discoveries (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            category TEXT DEFAULT 'finding',
+            what TEXT NOT NULL,
+            details TEXT DEFAULT '',
+            refs TEXT DEFAULT '[]',
+            confidence TEXT DEFAULT 'confirmed',
+            score INTEGER DEFAULT 0,
+            timestamp TEXT DEFAULT (datetime('now'))
+        );
+        CREATE VIEW IF NOT EXISTS vector_status AS
+        SELECT vector,
+               COUNT(*) as attempts,
+               MAX(score) as best_score,
+               CASE WHEN MAX(score) = 0 AND COUNT(*) >= 2 THEN 'dead'
+                    WHEN MAX(score) > 0 THEN 'promising'
+                    WHEN COUNT(*) = 0 THEN 'untried'
+                    ELSE 'active' END as status
+        FROM attempts GROUP BY vector;
+        CREATE VIEW IF NOT EXISTS recent_attempts AS
+        SELECT id, iteration, vector, score, reason, timestamp
+        FROM attempts ORDER BY id DESC LIMIT 50;
+    """)
+    db.commit()
+    db.close()
 
-_TEMPLATES = [
-    ("A", "DictReentry", "Dict __eq__/__hash__ re-entry"),
-    ("B", "SetReentry", "Set __hash__ re-entry during add"),
-    ("C", "SortCmp", "sort() py_cmp callback flood"),
-    ("D", "MinMaxMutate", "min/max/sorted key= while mutating"),
-    ("E", "MemDrift", "Memory counter drift via alloc/free mismatch"),
-    ("F", "ConfigFiles", "Read /data config files for host info"),
-    ("G", "AllocRace", "Allocation exhaustion mid-sort"),
-    ("H", "AsyncGC", "asyncio.gather GC race"),
-    ("I", "NameLookup", "Name lookup resume manipulation"),
-    ("J", "FutureChain", "Future snapshot chaining"),
-    ("K", "DoubleResume", "Double-resume state machine"),
-]
+def _kg_record(iteration: int, vector: str, code: str, score: int,
+               label: str, context: str, reason: str,
+               template: str = "", snapshot_kinds: list = None):
+    """Record an attempt in the knowledge graph."""
+    db = _kg_connect()
+    db.execute(
+        "INSERT INTO attempts (iteration, vector, template, code, score, label, context, reason, snapshot_kinds) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        (iteration, vector, template, code, score, label, context, reason,
+         json.dumps(snapshot_kinds or []))
+    )
+    db.commit()
+    db.close()
+
+# Initialize on import
+_kg_init()
+
+
 
 
 # ── Execution Layer ────────────────────────────────────────────
 
 @mcp.tool()
-async def hackmonty_run(code: str) -> str:
-    """POST Python code to hackmonty.com sandbox, handle snapshot/resume, return result.
+async def hackmonty_run(code: str, reason: str = "") -> str:
+    """Run Python code in sandbox. 'reason' is REQUIRED — explain WHY you're trying this.
 
     Returns JSON: success, error, output, print_output, num_snapshots,
     snapshot_kinds, elapsed_ms, total_resumes, context.
+    Automatically records the attempt to the knowledge graph.
     """
     from hackmonty_client import AsyncHackMontyClient
-    from evaluate import enrich_context
+    from evaluate import enrich_context, evaluate, SCORE_LABELS
 
     client = AsyncHackMontyClient(
         user_secret=os.environ.get("USER_SECRET", ""), concurrency=1
@@ -73,7 +113,7 @@ async def hackmonty_run(code: str) -> str:
     try:
         result = await client.run_code(code)
         kinds = [s.kind for s in result.snapshots]
-        return json.dumps({
+        raw = {
             "success": result.success,
             "error": (result.error or "")[:500],
             "output": str(result.raw_response.get("output", ""))[:500],
@@ -83,7 +123,22 @@ async def hackmonty_run(code: str) -> str:
             "elapsed_ms": result.elapsed_ms,
             "total_resumes": result.total_resumes,
             "context": enrich_context(result),
-        })
+        }
+        # Auto-evaluate and record to knowledge graph
+        er = evaluate(result)
+        state = json.loads(state_read()) if STATE_FILE.exists() else {}
+        iteration = state.get("last_iteration", 0) + 1
+        _kg_record(
+            iteration=iteration,
+            vector=reason.split(":")[0] if reason else "unknown",
+            code=code,
+            score=er.score,
+            label=SCORE_LABELS.get(er.score, ""),
+            context=raw["context"],
+            reason=reason or "no reason given",
+            snapshot_kinds=kinds,
+        )
+        return json.dumps(raw)
     finally:
         await client.close()
 
@@ -161,78 +216,13 @@ def hackmonty_syntax_check(code: str) -> str:
         return json.dumps({"valid": False, "error": f"Line {e.lineno}: {e.msg}"})
 
 
-# ── Bandit Layer ───────────────────────────────────────────────
-
-@mcp.tool()
-def bandit_select() -> str:
-    """Pick next attack template via UCB1 bandit. Returns {letter, name}."""
-    b = _get_bandit()
-    letter, name = b.select()
-    return json.dumps({"letter": letter, "name": name})
-
-
-@mcp.tool()
-def bandit_update(template: str, score: float) -> str:
-    """Update bandit stats after an attempt."""
-    b = _get_bandit()
-    b.update(template, score)
-    global _bandit_total
-    _bandit_total = b.total_attempts
-    return json.dumps({"ok": True})
-
-
-@mcp.tool()
-def bandit_novelty(code: str) -> str:
-    """Check if code is duplicate of previous. 1.0=novel, <0.5=near-dup."""
-    b = _get_bandit()
-    n = b.check_novelty(code)
-    return json.dumps({"novelty": round(n, 3)})
-
-
-@mcp.tool()
-def bandit_kill(template: str) -> str:
-    """Kill a template for 25 iterations."""
-    b = _get_bandit()
-    b.kill_template(template)
-    return json.dumps({"ok": True, "killed": template})
-
-
-@mcp.tool()
-def bandit_summary() -> str:
-    """Get bandit stats for all templates (text)."""
-    b = _get_bandit()
-    return b.summary()
-
-
-# ── Knowledge Layer ────────────────────────────────────────────
-
-@mcp.tool()
-def notes_history(n: int = 10) -> str:
-    """Read last N attempt records. Returns JSON array of {filename, template, score, category, context}."""
-    attempts = sorted(ATTEMPTS_DIR.glob("*/*.md"), reverse=True)[:n]
-    results = []
-    for f in attempts:
-        text = f.read_text()[:2000]
-        template, score, category, context = "", 0, "", ""
-        for line in text.split('\n'):
-            if "| Score:" in line and "Template:" in line:
-                parts = line.split("|")
-                template = parts[0].split(":")[-1].strip()
-                try: score = int(parts[1].split(":")[-1].strip().split()[0])
-                except: pass
-            if line.startswith("Category:"): category = line.split(":", 1)[-1].strip()
-            if line.startswith("Context:"): context = line.split(":", 1)[-1].strip()
-        results.append({
-            "filename": f.name, "template": template, "score": score,
-            "category": category, "context": context[:200],
-        })
-    return json.dumps(results)
-
+# ── Attempt & State Layer ──────────────────────────────────────
 
 @mcp.tool()
 def attempt_save(iteration: int, template: str, code: str,
-                 score: int, label: str, context: str) -> str:
-    """Save an attempt to disk. Returns {path}."""
+                 score: int, label: str, context: str, reason: str = "") -> str:
+    """Save an attempt to disk. 'reason' is REQUIRED — document why this was attempted.
+    Auto-records to knowledge graph. Returns {path}."""
     from datetime import datetime, timezone
     date_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     d = ATTEMPTS_DIR / date_str
@@ -241,6 +231,7 @@ def attempt_save(iteration: int, template: str, code: str,
 
     content = f"""# Attempt {iteration:03d} - {datetime.now(timezone.utc).isoformat()}
 ## Template: {template} | Score: {score} - {label}
+## Reason: {reason}
 ## Exploit code
 ```python
 {code}
@@ -252,25 +243,32 @@ Score: {score}/5 - {label}
 """
     path = d / f"attempt_{n:03d}.md"
     path.write_text(content)
+
+    # Auto-record to knowledge graph
+    _kg_record(
+        iteration=iteration, vector=template, code=code,
+        score=score, label=label, context=context,
+        reason=reason or "no reason given"
+    )
+
     return json.dumps({"path": str(path)})
 
 
 @mcp.tool()
 def state_read() -> str:
-    """Read orchestrator state: iteration, score_counts, bandit_total."""
+    """Read orchestrator state: iteration, score_counts."""
     if STATE_FILE.exists():
         return STATE_FILE.read_text()
-    return json.dumps({"last_iteration": 0, "score_counts": {}, "bandit_total": 0})
+    return json.dumps({"last_iteration": 0, "score_counts": {}})
 
 
 @mcp.tool()
-def state_write(iteration: int, score_counts_json: str, bandit_total: int):
+def state_write(iteration: int, score_counts_json: str):
     """Save orchestrator state for resume."""
     from datetime import datetime, timezone
     sc = json.loads(score_counts_json)
     STATE_FILE.write_text(json.dumps({
         "last_iteration": iteration, "score_counts": sc,
-        "bandit_total": bandit_total,
         "updated_at": datetime.now(timezone.utc).isoformat(),
     }, indent=2))
     return json.dumps({"ok": True})
@@ -299,12 +297,194 @@ def github_issues() -> str:
     return format_issues_for_agent(results)
 
 
-@mcp.tool()
-def findings_read() -> str:
-    """Read cumulative findings log (score >= 2)."""
-    fp = RESULTS_DIR / "findings.md"
-    return fp.read_text()[:3000] if fp.exists() else "No findings yet"
+# ── Knowledge Graph Tools ──────────────────────────────────────
 
+@mcp.tool()
+def kg_discover(category: str, what: str, details: str = "",
+                refs_json: str = "[]", confidence: str = "confirmed") -> str:
+    """Record a discovery in the knowledge graph.
+    category: blocked, available, technique, cve, finding
+    refs_json: JSON array of {url, title} from web research.
+    """
+    db = _kg_connect()
+    db.execute(
+        "INSERT INTO discoveries (category, what, details, refs, confidence) VALUES (?, ?, ?, ?, ?)",
+        (category, what, details, refs_json, confidence)
+    )
+    db.commit()
+    db.close()
+    return json.dumps({"ok": True, "discovery": what})
+
+@mcp.tool()
+def kg_dashboard() -> str:
+    """Full knowledge graph dashboard: vector_status + recent attempts."""
+    db = _kg_connect()
+    vectors = [dict(r) for r in db.execute("SELECT * FROM vector_status ORDER BY status, best_score DESC").fetchall()]
+    recent = [dict(r) for r in db.execute("SELECT * FROM recent_attempts").fetchall()]
+    discoveries = [dict(r) for r in db.execute(
+        "SELECT category, what, details, refs, confidence FROM discoveries ORDER BY id DESC LIMIT 20"
+    ).fetchall()]
+    db.close()
+    return json.dumps({
+        "vectors": vectors,
+        "recent_attempts": recent,
+        "discoveries": discoveries,
+    }, indent=2)
+
+@mcp.tool()
+def kg_dead_vectors() -> str:
+    """Return JSON list of vectors with status='dead'."""
+    db = _kg_connect()
+    rows = [dict(r) for r in db.execute(
+        "SELECT vector, attempts, best_score FROM vector_status WHERE status='dead' ORDER BY vector"
+    ).fetchall()]
+    db.close()
+    return json.dumps(rows)
+
+@mcp.tool()
+def kg_recent(n: int = 50) -> str:
+    """Return last N attempts from the knowledge graph."""
+    db = _kg_connect()
+    rows = [dict(r) for r in db.execute(
+        "SELECT id, iteration, vector, score, reason, timestamp FROM attempts ORDER BY id DESC LIMIT ?", (n,)
+    ).fetchall()]
+    db.close()
+    return json.dumps(rows)
+
+@mcp.tool()
+def kg_query(sql: str) -> str:
+    """Run a read-only SQL query against the knowledge graph."""
+    if not sql.strip().upper().lstrip().startswith("SELECT"):
+        return json.dumps({"error": "Only SELECT queries allowed"})
+    db = _kg_connect()
+    try:
+        rows = [dict(r) for r in db.execute(sql).fetchall()]
+        db.close()
+        return json.dumps(rows)
+    except Exception as e:
+        db.close()
+        return json.dumps({"error": str(e)})
+
+@mcp.tool()
+def kg_bootstrap(force: bool = False) -> str:
+    """One-time migration of all existing data into the knowledge graph.
+    Set force=true to re-import even if DB already has data.
+    Imports: attempt_*.md files, findings.md, understanding/*.md, state.json.
+    """
+    db = _kg_connect()
+    count = db.execute("SELECT COUNT(*) as n FROM attempts").fetchone()["n"]
+    if count > 0 and not force:
+        db.close()
+        return json.dumps({"ok": True, "note": f"Already has {count} attempts", "count": count})
+
+    if force:
+        db.execute("DELETE FROM attempts")
+        db.execute("DELETE FROM discoveries")
+        db.commit()
+
+    state = json.loads(state_read())
+    last_iteration = state.get("last_iteration", 0)
+    imported_attempts = 0
+    imported_discoveries = 0
+    date_dirs = 0
+
+    # 1. Import ALL attempt files from ALL date directories
+    for attempt_dir in sorted(ATTEMPTS_DIR.glob("*")):
+        if not attempt_dir.is_dir():
+            continue
+        date_dirs += 1
+        for f in sorted(attempt_dir.glob("attempt_*.md")):
+            try:
+                text = f.read_text()[:3000]
+                template = ""
+                score = 0
+                label = ""
+                context = ""
+                code = ""
+                in_code = False
+                code_lines = []
+                for line in text.split("\n"):
+                    if "Template:" in line and "Score:" in line:
+                        parts = line.split("|")
+                        template = parts[0].split(":")[-1].strip() if len(parts) > 0 else ""
+                        try:
+                            score_part = parts[1].split(":")[-1].strip() if len(parts) > 1 else "0"
+                            score = int(score_part.split()[0])
+                        except:
+                            pass
+                    if "```python" in line:
+                        in_code = True
+                        continue
+                    if in_code:
+                        if "```" in line:
+                            in_code = False
+                        else:
+                            code_lines.append(line)
+                # Extract context + reason
+                if "Context:" in text:
+                    ctx_start = text.index("Context:") + 9
+                    context = text[ctx_start:].split("\n")[0].strip()[:500]
+                if "Score:" in text and "/5" in text:
+                    parts = text.split("Score:")[-1].split("/5")[0].strip()
+                    label = parts if parts else ""
+
+                db.execute(
+                    "INSERT INTO attempts (iteration, vector, template, code, score, label, context, reason) "
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                    (last_iteration, template, template,
+                     "\n".join(code_lines[-50:]), score, label,
+                     context or "Imported", f"Imported from {f.name}")
+                )
+                imported_attempts += 1
+            except Exception:
+                pass
+    db.commit()
+
+    # 2. Import findings.md into discoveries
+    findings_file = RESULTS_DIR / "findings.md"
+    if findings_file.exists():
+        try:
+            ft = findings_file.read_text()
+            for block in ft.split("## ["):
+                if not block.strip():
+                    continue
+                lines = block.strip().split("\n")
+                header = lines[0].rstrip("]") if lines else ""
+                body = "\n".join(lines[1:]).strip()[:2000]
+                if header and body:
+                    db.execute(
+                        "INSERT INTO discoveries (category, what, details, refs, confidence) VALUES (?, ?, ?, ?, ?)",
+                        ("finding", f"Finding: {header}", body, "[]", "confirmed")
+                    )
+                    imported_discoveries += 1
+        except Exception:
+            pass
+        db.commit()
+
+    # 3. Import understanding files as discoveries
+    ud = NOTES_DIR / "understanding"
+    if ud.exists():
+        for f in sorted(ud.glob("*.md")):
+            try:
+                name = f.stem.replace("_", " ").title()
+                content = f.read_text()[:5000]
+                db.execute(
+                    "INSERT INTO discoveries (category, what, details, confidence) VALUES (?, ?, ?, ?)",
+                    ("analysis", f"Understanding: {name}", content, "medium")
+                )
+                imported_discoveries += 1
+            except Exception:
+                pass
+        db.commit()
+
+    db.close()
+    return json.dumps({
+        "ok": True,
+        "imported_attempts": imported_attempts,
+        "imported_discoveries": imported_discoveries,
+        "date_directories": date_dirs,
+        "last_iteration": last_iteration,
+    })
 
 # ── Main ──────────────────────────────────────────────────────
 
