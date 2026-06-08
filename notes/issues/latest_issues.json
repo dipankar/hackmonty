@@ -1,6 +1,6 @@
 {
   "pydantic/monty": {
-    "fetched_at": "2026-06-07T223848Z",
+    "fetched_at": "2026-06-08T093415Z",
     "exploitable": [
       {
         "number": 496,
@@ -11,8 +11,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/496",
-        "age_days": 0.7,
-        "stalled_days": 0.7
+        "age_days": 1.1,
+        "stalled_days": 1.1
       },
       {
         "number": 483,
@@ -23,8 +23,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/483",
-        "age_days": 5.4,
-        "stalled_days": 3.1
+        "age_days": 5.8,
+        "stalled_days": 3.5
       },
       {
         "number": 480,
@@ -35,8 +35,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/480",
-        "age_days": 6.3,
-        "stalled_days": 4.5
+        "age_days": 6.8,
+        "stalled_days": 5.0
       },
       {
         "number": 455,
@@ -47,8 +47,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/455",
-        "age_days": 19.3,
-        "stalled_days": 4.4
+        "age_days": 19.7,
+        "stalled_days": 4.8
       },
       {
         "number": 440,
@@ -59,8 +59,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/440",
-        "age_days": 23.6,
-        "stalled_days": 4.4
+        "age_days": 24.1,
+        "stalled_days": 4.8
       },
       {
         "number": 380,
@@ -71,8 +71,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/380",
-        "age_days": 46.3,
-        "stalled_days": 42.7
+        "age_days": 46.8,
+        "stalled_days": 43.1
       },
       {
         "number": 365,
@@ -83,8 +83,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/365",
-        "age_days": 48.3,
-        "stalled_days": 48.3
+        "age_days": 48.8,
+        "stalled_days": 48.8
       },
       {
         "number": 364,
@@ -95,8 +95,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/364",
-        "age_days": 48.4,
-        "stalled_days": 48.4
+        "age_days": 48.8,
+        "stalled_days": 48.8
       },
       {
         "number": 362,
@@ -107,8 +107,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/362",
-        "age_days": 48.4,
-        "stalled_days": 48.1
+        "age_days": 48.9,
+        "stalled_days": 48.5
       },
       {
         "number": 351,
@@ -119,8 +119,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/351",
-        "age_days": 51.3,
-        "stalled_days": 51.3
+        "age_days": 51.8,
+        "stalled_days": 51.7
       },
       {
         "number": 350,
@@ -131,8 +131,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/350",
-        "age_days": 51.3,
-        "stalled_days": 51.3
+        "age_days": 51.8,
+        "stalled_days": 51.8
       },
       {
         "number": 338,
@@ -143,8 +143,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/338",
-        "age_days": 52.2,
-        "stalled_days": 51.3
+        "age_days": 52.7,
+        "stalled_days": 51.7
       },
       {
         "number": 335,
@@ -155,8 +155,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/335",
-        "age_days": 53.3,
-        "stalled_days": 53.3
+        "age_days": 53.7,
+        "stalled_days": 53.7
       },
       {
         "number": 318,
@@ -167,8 +167,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/318",
-        "age_days": 57.5,
-        "stalled_days": 57.5
+        "age_days": 57.9,
+        "stalled_days": 57.9
       },
       {
         "number": 315,
@@ -179,8 +179,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/315",
-        "age_days": 59.3,
-        "stalled_days": 59.3
+        "age_days": 59.7,
+        "stalled_days": 59.7
       }
     ],
     "informational": [
@@ -193,8 +193,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/490",
-        "age_days": 3.4,
-        "stalled_days": 3.4
+        "age_days": 3.9,
+        "stalled_days": 3.9
       },
       {
         "number": 477,
@@ -205,8 +205,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/477",
-        "age_days": 9.3,
-        "stalled_days": 4.5
+        "age_days": 9.8,
+        "stalled_days": 5.0
       },
       {
         "number": 464,
@@ -217,8 +217,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/464",
-        "age_days": 12.4,
-        "stalled_days": 4.4
+        "age_days": 12.8,
+        "stalled_days": 4.8
       },
       {
         "number": 452,
@@ -229,8 +229,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/452",
-        "age_days": 19.4,
-        "stalled_days": 4.4
+        "age_days": 19.8,
+        "stalled_days": 4.8
       },
       {
         "number": 423,
@@ -241,8 +241,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/423",
-        "age_days": 30.2,
-        "stalled_days": 30.2
+        "age_days": 30.7,
+        "stalled_days": 30.7
       },
       {
         "number": 408,
@@ -253,8 +253,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/408",
-        "age_days": 38.2,
-        "stalled_days": 34.3
+        "age_days": 38.7,
+        "stalled_days": 34.7
       },
       {
         "number": 394,
@@ -265,8 +265,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/394",
-        "age_days": 43.3,
-        "stalled_days": 43.3
+        "age_days": 43.8,
+        "stalled_days": 43.8
       },
       {
         "number": 387,
@@ -277,8 +277,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/387",
-        "age_days": 45.5,
-        "stalled_days": 19.4
+        "age_days": 45.9,
+        "stalled_days": 19.8
       },
       {
         "number": 374,
@@ -289,8 +289,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/374",
-        "age_days": 47.4,
-        "stalled_days": 47.2
+        "age_days": 47.9,
+        "stalled_days": 47.7
       },
       {
         "number": 370,
@@ -301,8 +301,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/370",
-        "age_days": 47.5,
-        "stalled_days": 47.5
+        "age_days": 48.0,
+        "stalled_days": 48.0
       },
       {
         "number": 369,
@@ -313,8 +313,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/369",
-        "age_days": 47.7,
-        "stalled_days": 34.4
+        "age_days": 48.1,
+        "stalled_days": 34.9
       },
       {
         "number": 352,
@@ -325,8 +325,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/352",
-        "age_days": 51.2,
-        "stalled_days": 51.2
+        "age_days": 51.6,
+        "stalled_days": 51.6
       },
       {
         "number": 346,
@@ -337,8 +337,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/346",
-        "age_days": 51.4,
-        "stalled_days": 51.4
+        "age_days": 51.9,
+        "stalled_days": 51.9
       },
       {
         "number": 343,
@@ -349,8 +349,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/343",
-        "age_days": 51.5,
-        "stalled_days": 51.5
+        "age_days": 52.0,
+        "stalled_days": 51.9
       },
       {
         "number": 340,
@@ -361,8 +361,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/340",
-        "age_days": 52.1,
-        "stalled_days": 52.1
+        "age_days": 52.6,
+        "stalled_days": 52.6
       },
       {
         "number": 339,
@@ -373,8 +373,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/339",
-        "age_days": 52.2,
-        "stalled_days": 51.1
+        "age_days": 52.6,
+        "stalled_days": 51.6
       },
       {
         "number": 331,
@@ -385,8 +385,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/331",
-        "age_days": 54.4,
-        "stalled_days": 54.3
+        "age_days": 54.8,
+        "stalled_days": 54.7
       },
       {
         "number": 330,
@@ -397,8 +397,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/330",
-        "age_days": 54.4,
-        "stalled_days": 54.3
+        "age_days": 54.9,
+        "stalled_days": 54.7
       },
       {
         "number": 327,
@@ -409,8 +409,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/327",
-        "age_days": 55.3,
-        "stalled_days": 55.3
+        "age_days": 55.7,
+        "stalled_days": 55.7
       },
       {
         "number": 300,
@@ -421,8 +421,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/300",
-        "age_days": 69.6,
-        "stalled_days": 69.5
+        "age_days": 70.0,
+        "stalled_days": 70.0
       },
       {
         "number": 279,
@@ -433,8 +433,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/279",
-        "age_days": 78.4,
-        "stalled_days": 78.4
+        "age_days": 78.8,
+        "stalled_days": 78.8
       },
       {
         "number": 273,
@@ -447,8 +447,8 @@
           "bug"
         ],
         "url": "https://github.com/pydantic/monty/issues/273",
-        "age_days": 81.5,
-        "stalled_days": 76.8
+        "age_days": 81.9,
+        "stalled_days": 77.3
       },
       {
         "number": 270,
@@ -459,8 +459,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/270",
-        "age_days": 85.7,
-        "stalled_days": 85.7
+        "age_days": 86.1,
+        "stalled_days": 86.1
       },
       {
         "number": 222,
@@ -471,8 +471,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/222",
-        "age_days": 96.8,
-        "stalled_days": 83.3
+        "age_days": 97.2,
+        "stalled_days": 83.8
       },
       {
         "number": 150,
@@ -483,8 +483,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/150",
-        "age_days": 116.3,
-        "stalled_days": 68.0
+        "age_days": 116.8,
+        "stalled_days": 68.4
       }
     ],
     "wontfix": [
@@ -497,8 +497,8 @@
         "closed_at": "2026-06-07T07:04:17Z",
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/497",
-        "age_days": 0.7,
-        "stalled_days": 0.6
+        "age_days": 1.1,
+        "stalled_days": 1.1
       },
       {
         "number": 385,
@@ -509,8 +509,8 @@
         "closed_at": "2026-05-19T14:58:01Z",
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/385",
-        "age_days": 46.1,
-        "stalled_days": 19.3
+        "age_days": 46.6,
+        "stalled_days": 19.8
       }
     ],
     "stale": [
@@ -523,8 +523,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/249",
-        "age_days": 92.0,
-        "stalled_days": 92.0
+        "age_days": 92.5,
+        "stalled_days": 92.5
       },
       {
         "number": 232,
@@ -535,8 +535,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/232",
-        "age_days": 96.3,
-        "stalled_days": 96.1
+        "age_days": 96.8,
+        "stalled_days": 96.5
       },
       {
         "number": 218,
@@ -547,8 +547,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/218",
-        "age_days": 97.5,
-        "stalled_days": 97.5
+        "age_days": 98.0,
+        "stalled_days": 98.0
       },
       {
         "number": 217,
@@ -559,8 +559,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/217",
-        "age_days": 98.1,
-        "stalled_days": 98.1
+        "age_days": 98.5,
+        "stalled_days": 98.5
       },
       {
         "number": 211,
@@ -571,8 +571,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/211",
-        "age_days": 100.3,
-        "stalled_days": 99.1
+        "age_days": 100.7,
+        "stalled_days": 99.6
       },
       {
         "number": 197,
@@ -583,8 +583,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/197",
-        "age_days": 104.8,
-        "stalled_days": 104.8
+        "age_days": 105.3,
+        "stalled_days": 105.3
       },
       {
         "number": 195,
@@ -595,8 +595,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/195",
-        "age_days": 107.2,
-        "stalled_days": 105.4
+        "age_days": 107.7,
+        "stalled_days": 105.8
       },
       {
         "number": 181,
@@ -607,8 +607,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/181",
-        "age_days": 110.1,
-        "stalled_days": 109.6
+        "age_days": 110.5,
+        "stalled_days": 110.0
       },
       {
         "number": 176,
@@ -619,8 +619,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/176",
-        "age_days": 110.4,
-        "stalled_days": 110.4
+        "age_days": 110.9,
+        "stalled_days": 110.9
       },
       {
         "number": 172,
@@ -631,8 +631,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/172",
-        "age_days": 110.5,
-        "stalled_days": 109.5
+        "age_days": 111.0,
+        "stalled_days": 110.0
       }
     ],
     "resolved": [
@@ -645,8 +645,8 @@
         "closed_at": "2026-05-22T10:50:14Z",
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/459",
-        "age_days": 16.5,
-        "stalled_days": 16.5
+        "age_days": 17.0,
+        "stalled_days": 16.9
       },
       {
         "number": 425,
@@ -657,8 +657,8 @@
         "closed_at": "2026-05-15T19:22:58Z",
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/425",
-        "age_days": 29.0,
-        "stalled_days": 23.1
+        "age_days": 29.4,
+        "stalled_days": 23.6
       },
       {
         "number": 412,
@@ -669,8 +669,8 @@
         "closed_at": "2026-05-06T19:43:43Z",
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/412",
-        "age_days": 34.1,
-        "stalled_days": 32.1
+        "age_days": 34.6,
+        "stalled_days": 32.6
       },
       {
         "number": 411,
@@ -681,8 +681,8 @@
         "closed_at": "2026-05-07T12:28:20Z",
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/411",
-        "age_days": 34.1,
-        "stalled_days": 31.4
+        "age_days": 34.6,
+        "stalled_days": 31.9
       },
       {
         "number": 409,
@@ -693,8 +693,8 @@
         "closed_at": "2026-05-06T19:43:42Z",
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/409",
-        "age_days": 35.4,
-        "stalled_days": 32.1
+        "age_days": 35.9,
+        "stalled_days": 32.6
       },
       {
         "number": 400,
@@ -705,8 +705,8 @@
         "closed_at": "2026-05-27T12:51:50Z",
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/400",
-        "age_days": 41.0,
-        "stalled_days": 11.4
+        "age_days": 41.4,
+        "stalled_days": 11.9
       },
       {
         "number": 396,
@@ -717,8 +717,8 @@
         "closed_at": "2026-04-28T20:22:10Z",
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/396",
-        "age_days": 42.2,
-        "stalled_days": 40.1
+        "age_days": 42.6,
+        "stalled_days": 40.6
       },
       {
         "number": 393,
@@ -729,8 +729,8 @@
         "closed_at": "2026-04-25T09:18:41Z",
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/393",
-        "age_days": 43.8,
-        "stalled_days": 43.6
+        "age_days": 44.3,
+        "stalled_days": 44.0
       },
       {
         "number": 389,
@@ -741,8 +741,8 @@
         "closed_at": "2026-04-23T19:07:00Z",
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/389",
-        "age_days": 45.1,
-        "stalled_days": 45.1
+        "age_days": 45.6,
+        "stalled_days": 45.6
       },
       {
         "number": 388,
@@ -753,8 +753,8 @@
         "closed_at": "2026-04-29T11:10:20Z",
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/388",
-        "age_days": 45.2,
-        "stalled_days": 39.5
+        "age_days": 45.7,
+        "stalled_days": 39.9
       },
       {
         "number": 378,
@@ -765,8 +765,8 @@
         "closed_at": "2026-05-19T15:01:19Z",
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/378",
-        "age_days": 46.4,
-        "stalled_days": 19.3
+        "age_days": 46.9,
+        "stalled_days": 19.8
       },
       {
         "number": 377,
@@ -777,8 +777,8 @@
         "closed_at": "2026-05-15T10:49:54Z",
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/377",
-        "age_days": 47.1,
-        "stalled_days": 23.5
+        "age_days": 47.5,
+        "stalled_days": 23.9
       },
       {
         "number": 367,
@@ -789,8 +789,8 @@
         "closed_at": "2026-04-21T10:49:17Z",
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/367",
-        "age_days": 48.1,
-        "stalled_days": 47.5
+        "age_days": 48.6,
+        "stalled_days": 47.9
       },
       {
         "number": 366,
@@ -801,8 +801,8 @@
         "closed_at": "2026-05-15T16:04:15Z",
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/366",
-        "age_days": 48.2,
-        "stalled_days": 23.3
+        "age_days": 48.7,
+        "stalled_days": 23.7
       },
       {
         "number": 359,
@@ -813,8 +813,8 @@
         "closed_at": "2026-05-26T13:07:21Z",
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/359",
-        "age_days": 50.7,
-        "stalled_days": 12.4
+        "age_days": 51.1,
+        "stalled_days": 12.9
       },
       {
         "number": 347,
@@ -825,8 +825,8 @@
         "closed_at": "2026-05-28T10:31:40Z",
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/347",
-        "age_days": 51.4,
-        "stalled_days": 10.5
+        "age_days": 51.9,
+        "stalled_days": 11.0
       },
       {
         "number": 345,
@@ -837,8 +837,8 @@
         "closed_at": "2026-05-28T10:31:41Z",
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/345",
-        "age_days": 51.4,
-        "stalled_days": 10.5
+        "age_days": 51.9,
+        "stalled_days": 11.0
       },
       {
         "number": 341,
@@ -849,8 +849,8 @@
         "closed_at": "2026-04-17T11:09:46Z",
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/341",
-        "age_days": 51.7,
-        "stalled_days": 51.5
+        "age_days": 52.2,
+        "stalled_days": 51.9
       },
       {
         "number": 329,
@@ -861,8 +861,8 @@
         "closed_at": "2026-04-14T09:31:03Z",
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/329",
-        "age_days": 54.7,
-        "stalled_days": 54.5
+        "age_days": 55.1,
+        "stalled_days": 55.0
       },
       {
         "number": 323,
@@ -873,8 +873,8 @@
         "closed_at": "2026-05-14T10:14:30Z",
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/323",
-        "age_days": 55.5,
-        "stalled_days": 24.5
+        "age_days": 56.0,
+        "stalled_days": 25.0
       },
       {
         "number": 316,
@@ -885,8 +885,8 @@
         "closed_at": "2026-04-10T19:38:01Z",
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/316",
-        "age_days": 58.1,
-        "stalled_days": 58.1
+        "age_days": 58.6,
+        "stalled_days": 58.6
       },
       {
         "number": 304,
@@ -897,8 +897,8 @@
         "closed_at": "2026-03-31T23:39:16Z",
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/304",
-        "age_days": 69.3,
-        "stalled_days": 68.0
+        "age_days": 69.8,
+        "stalled_days": 68.4
       },
       {
         "number": 302,
@@ -909,13 +909,13 @@
         "closed_at": "2026-04-13T15:26:28Z",
         "labels": [],
         "url": "https://github.com/pydantic/monty/issues/302",
-        "age_days": 69.5,
-        "stalled_days": 55.3
+        "age_days": 70.0,
+        "stalled_days": 55.8
       }
     ]
   },
   "pydantic/pydantic-ai": {
-    "fetched_at": "2026-06-07T223848Z",
+    "fetched_at": "2026-06-08T093415Z",
     "exploitable": [
       {
         "number": 5811,
@@ -931,8 +931,8 @@
           "pydanty:bug"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5811",
-        "age_days": 1.8,
-        "stalled_days": 1.7
+        "age_days": 2.2,
+        "stalled_days": 2.1
       },
       {
         "number": 5800,
@@ -947,8 +947,8 @@
           "pydanty:feature"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5800",
-        "age_days": 2.2,
-        "stalled_days": 2.2
+        "age_days": 2.7,
+        "stalled_days": 2.6
       },
       {
         "number": 5798,
@@ -961,8 +961,8 @@
           "bug"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5798",
-        "age_days": 2.2,
-        "stalled_days": 2.2
+        "age_days": 2.7,
+        "stalled_days": 2.7
       },
       {
         "number": 5796,
@@ -975,8 +975,8 @@
           "bug"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5796",
-        "age_days": 2.3,
-        "stalled_days": 2.3
+        "age_days": 2.8,
+        "stalled_days": 2.8
       },
       {
         "number": 5782,
@@ -992,8 +992,8 @@
           "loopable"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5782",
-        "age_days": 2.9,
-        "stalled_days": 2.9
+        "age_days": 3.4,
+        "stalled_days": 3.3
       },
       {
         "number": 5774,
@@ -1010,8 +1010,8 @@
           "pydanty:bug"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5774",
-        "age_days": 3.3,
-        "stalled_days": 2.0
+        "age_days": 3.8,
+        "stalled_days": 2.5
       },
       {
         "number": 5764,
@@ -1028,8 +1028,8 @@
           "state-loss"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5764",
-        "age_days": 4.8,
-        "stalled_days": 4.7
+        "age_days": 5.2,
+        "stalled_days": 5.2
       },
       {
         "number": 5757,
@@ -1046,8 +1046,8 @@
           "pydanty:bug"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5757",
-        "age_days": 5.7,
-        "stalled_days": 2.9
+        "age_days": 6.2,
+        "stalled_days": 3.3
       },
       {
         "number": 5744,
@@ -1065,8 +1065,8 @@
           "state-loss"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5744",
-        "age_days": 6.8,
-        "stalled_days": 6.7
+        "age_days": 7.2,
+        "stalled_days": 7.2
       },
       {
         "number": 5731,
@@ -1083,8 +1083,8 @@
           "state-loss"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5731",
-        "age_days": 8.8,
-        "stalled_days": 8.8
+        "age_days": 9.2,
+        "stalled_days": 9.2
       },
       {
         "number": 5721,
@@ -1100,8 +1100,8 @@
           "serialization"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5721",
-        "age_days": 9.8,
-        "stalled_days": 5.7
+        "age_days": 10.2,
+        "stalled_days": 6.2
       },
       {
         "number": 5696,
@@ -1117,8 +1117,8 @@
           "serialization"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5696",
-        "age_days": 10.8,
-        "stalled_days": 10.0
+        "age_days": 11.2,
+        "stalled_days": 10.5
       },
       {
         "number": 5688,
@@ -1134,15 +1134,15 @@
           "pydanty:bug"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5688",
-        "age_days": 11.5,
-        "stalled_days": 10.0
+        "age_days": 11.9,
+        "stalled_days": 10.5
       },
       {
         "number": 5685,
         "title": "[aw] No-Op Runs",
         "state": "open",
         "created_at": "2026-05-27T08:21:15Z",
-        "updated_at": "2026-06-05T04:20:56Z",
+        "updated_at": "2026-06-08T07:20:10Z",
         "closed_at": null,
         "labels": [
           "meta",
@@ -1150,8 +1150,8 @@
           "agentic-workflows"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5685",
-        "age_days": 11.6,
-        "stalled_days": 2.8
+        "age_days": 12.1,
+        "stalled_days": 0.1
       },
       {
         "number": 5679,
@@ -1167,8 +1167,8 @@
           "area:ui-adapters"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5679",
-        "age_days": 11.8,
-        "stalled_days": 11.7
+        "age_days": 12.2,
+        "stalled_days": 12.2
       },
       {
         "number": 5666,
@@ -1184,8 +1184,8 @@
           "serialization"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5666",
-        "age_days": 12.8,
-        "stalled_days": 10.0
+        "age_days": 13.2,
+        "stalled_days": 10.5
       },
       {
         "number": 5662,
@@ -1201,8 +1201,8 @@
           "pydanty:feature"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5662",
-        "age_days": 12.9,
-        "stalled_days": 5.4
+        "age_days": 13.4,
+        "stalled_days": 5.9
       },
       {
         "number": 5657,
@@ -1219,26 +1219,27 @@
           "pydanty:bug"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5657",
-        "age_days": 13.1,
-        "stalled_days": 10.0
-      },
-      {
-        "number": 5629,
-        "title": "[roundtrip-sweep] `_clean_message_history`: `ModelRequest.metadata` is dropped on consecutive-request merge",
-        "state": "open",
-        "created_at": "2026-05-24T04:20:28Z",
-        "updated_at": "2026-06-01T17:19:11Z",
-        "closed_at": null,
-        "labels": [
-          "bug",
-          "serialization"
-        ],
-        "url": "https://github.com/pydantic/pydantic-ai/issues/5629",
-        "age_days": 14.8,
-        "stalled_days": 6.2
+        "age_days": 13.5,
+        "stalled_days": 10.5
       }
     ],
     "informational": [
+      {
+        "number": 5825,
+        "title": "[aw] Pydantic AI Stale Issues Finder failed",
+        "state": "open",
+        "created_at": "2026-06-08T06:14:08Z",
+        "updated_at": "2026-06-08T06:16:24Z",
+        "closed_at": null,
+        "labels": [
+          "meta",
+          "pydanty:meta",
+          "agentic-workflows"
+        ],
+        "url": "https://github.com/pydantic/pydantic-ai/issues/5825",
+        "age_days": 0.1,
+        "stalled_days": 0.1
+      },
       {
         "number": 5812,
         "title": "vLLM backend rejects PromptedOutput requests with 'System message must be at the beginning'",
@@ -1254,8 +1255,8 @@
           "pydanty:bug"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5812",
-        "age_days": 1.7,
-        "stalled_days": 1.7
+        "age_days": 2.1,
+        "stalled_days": 2.1
       },
       {
         "number": 5807,
@@ -1271,8 +1272,8 @@
           "pydanty:bug"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5807",
-        "age_days": 2.1,
-        "stalled_days": 2.0
+        "age_days": 2.5,
+        "stalled_days": 2.5
       },
       {
         "number": 5806,
@@ -1283,8 +1284,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5806",
-        "age_days": 2.1,
-        "stalled_days": 2.1
+        "age_days": 2.5,
+        "stalled_days": 2.5
       },
       {
         "number": 5802,
@@ -1295,8 +1296,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5802",
-        "age_days": 2.2,
-        "stalled_days": 2.2
+        "age_days": 2.6,
+        "stalled_days": 2.6
       },
       {
         "number": 5801,
@@ -1307,8 +1308,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5801",
-        "age_days": 2.2,
-        "stalled_days": 2.2
+        "age_days": 2.6,
+        "stalled_days": 2.6
       },
       {
         "number": 5784,
@@ -1324,8 +1325,8 @@
           "agentic-workflows"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5784",
-        "age_days": 2.9,
-        "stalled_days": 2.0
+        "age_days": 3.4,
+        "stalled_days": 2.4
       },
       {
         "number": 5783,
@@ -1341,8 +1342,8 @@
           "agentic-workflows"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5783",
-        "age_days": 2.9,
-        "stalled_days": 2.9
+        "age_days": 3.4,
+        "stalled_days": 3.4
       },
       {
         "number": 5781,
@@ -1359,8 +1360,8 @@
           "pydanty:bug"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5781",
-        "age_days": 3.2,
-        "stalled_days": 2.0
+        "age_days": 3.6,
+        "stalled_days": 2.4
       },
       {
         "number": 5780,
@@ -1376,15 +1377,15 @@
           "pydanty:bug"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5780",
-        "age_days": 3.2,
-        "stalled_days": 2.0
+        "age_days": 3.6,
+        "stalled_days": 2.4
       },
       {
         "number": 5770,
         "title": "[Feature] Add `/usage` slash command to `clai` CLI to display cumulative token usage",
         "state": "open",
         "created_at": "2026-06-03T14:24:23Z",
-        "updated_at": "2026-06-05T13:13:55Z",
+        "updated_at": "2026-06-08T08:42:26Z",
         "closed_at": null,
         "labels": [
           "feature",
@@ -1394,8 +1395,8 @@
           "pydanty:feature"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5770",
-        "age_days": 4.3,
-        "stalled_days": 2.4
+        "age_days": 4.8,
+        "stalled_days": 0.0
       },
       {
         "number": 5766,
@@ -1411,8 +1412,8 @@
           "agentic-workflows"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5766",
-        "age_days": 4.6,
-        "stalled_days": 4.6
+        "age_days": 5.0,
+        "stalled_days": 5.0
       },
       {
         "number": 5760,
@@ -1428,8 +1429,8 @@
           "pydanty:bug"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5760",
-        "age_days": 5.4,
-        "stalled_days": 5.3
+        "age_days": 5.8,
+        "stalled_days": 5.8
       },
       {
         "number": 5756,
@@ -1445,15 +1446,15 @@
           "v3"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5756",
-        "age_days": 5.8,
-        "stalled_days": 5.8
+        "age_days": 6.2,
+        "stalled_days": 6.2
       },
       {
         "number": 5755,
         "title": "[aw] Pydantic AI Round-Trip Sweep failed",
         "state": "open",
         "created_at": "2026-06-02T04:33:18Z",
-        "updated_at": "2026-06-07T04:32:56Z",
+        "updated_at": "2026-06-08T04:33:00Z",
         "closed_at": null,
         "labels": [
           "invalid",
@@ -1462,8 +1463,8 @@
           "agentic-workflows"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5755",
-        "age_days": 5.8,
-        "stalled_days": 0.8
+        "age_days": 6.2,
+        "stalled_days": 0.2
       },
       {
         "number": 5753,
@@ -1479,8 +1480,8 @@
           "provider-mapping-sweep"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5753",
-        "age_days": 6.0,
-        "stalled_days": 6.0
+        "age_days": 6.5,
+        "stalled_days": 6.5
       },
       {
         "number": 5751,
@@ -1496,8 +1497,8 @@
           "pydanty:meta"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5751",
-        "age_days": 6.1,
-        "stalled_days": 6.1
+        "age_days": 6.6,
+        "stalled_days": 6.5
       },
       {
         "number": 5745,
@@ -1513,8 +1514,8 @@
           "stale-issues"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5745",
-        "age_days": 6.7,
-        "stalled_days": 6.7
+        "age_days": 7.2,
+        "stalled_days": 7.2
       },
       {
         "number": 5724,
@@ -1530,8 +1531,8 @@
           "pydanty:bug"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5724",
-        "age_days": 9.3,
-        "stalled_days": 7.4
+        "age_days": 9.7,
+        "stalled_days": 7.8
       },
       {
         "number": 5708,
@@ -1547,8 +1548,8 @@
           "pydanty:feature"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5708",
-        "age_days": 10.2,
-        "stalled_days": 9.2
+        "age_days": 10.6,
+        "stalled_days": 9.6
       },
       {
         "number": 5706,
@@ -1565,8 +1566,8 @@
           "pydanty:feature"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5706",
-        "age_days": 10.2,
-        "stalled_days": 10.2
+        "age_days": 10.7,
+        "stalled_days": 10.7
       },
       {
         "number": 5702,
@@ -1582,8 +1583,8 @@
           "pydanty:bug"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5702",
-        "age_days": 10.3,
-        "stalled_days": 6.1
+        "age_days": 10.7,
+        "stalled_days": 6.5
       },
       {
         "number": 5687,
@@ -1599,8 +1600,8 @@
           "pydanty:feature"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5687",
-        "age_days": 11.5,
-        "stalled_days": 9.1
+        "age_days": 12.0,
+        "stalled_days": 9.6
       },
       {
         "number": 5686,
@@ -1617,8 +1618,8 @@
           "area:ui-adapters"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5686",
-        "age_days": 11.6,
-        "stalled_days": 11.6
+        "age_days": 12.0,
+        "stalled_days": 12.0
       },
       {
         "number": 5669,
@@ -1635,8 +1636,8 @@
           "provider-parity-explore"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5669",
-        "age_days": 12.3,
-        "stalled_days": 11.6
+        "age_days": 12.8,
+        "stalled_days": 12.0
       },
       {
         "number": 5661,
@@ -1651,8 +1652,8 @@
           "xai"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5661",
-        "age_days": 12.9,
-        "stalled_days": 12.4
+        "age_days": 13.4,
+        "stalled_days": 12.8
       },
       {
         "number": 5653,
@@ -1668,8 +1669,8 @@
           "pydanty:bug"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5653",
-        "age_days": 13.4,
-        "stalled_days": 12.7
+        "age_days": 13.9,
+        "stalled_days": 13.2
       },
       {
         "number": 5649,
@@ -1686,8 +1687,8 @@
           "pydanty:feature"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5649",
-        "age_days": 13.5,
-        "stalled_days": 13.5
+        "age_days": 14.0,
+        "stalled_days": 13.9
       },
       {
         "number": 5648,
@@ -1703,8 +1704,8 @@
           "docs-drift"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5648",
-        "age_days": 13.7,
-        "stalled_days": 2.3
+        "age_days": 14.1,
+        "stalled_days": 2.7
       },
       {
         "number": 5638,
@@ -1715,8 +1716,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5638",
-        "age_days": 14.1,
-        "stalled_days": 14.0
+        "age_days": 14.5,
+        "stalled_days": 14.5
       },
       {
         "number": 5637,
@@ -1727,8 +1728,8 @@
         "closed_at": null,
         "labels": [],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5637",
-        "age_days": 14.1,
-        "stalled_days": 13.3
+        "age_days": 14.5,
+        "stalled_days": 13.7
       },
       {
         "number": 5636,
@@ -1745,8 +1746,8 @@
           "pydanty:feature"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5636",
-        "age_days": 14.1,
-        "stalled_days": 13.4
+        "age_days": 14.5,
+        "stalled_days": 13.8
       }
     ],
     "wontfix": [
@@ -1764,8 +1765,8 @@
           "pydanty:promotional"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5789",
-        "age_days": 2.6,
-        "stalled_days": 2.5
+        "age_days": 3.1,
+        "stalled_days": 2.9
       },
       {
         "number": 5738,
@@ -1780,8 +1781,8 @@
           "pydanty:promotional"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5738",
-        "age_days": 7.9,
-        "stalled_days": 5.7
+        "age_days": 8.4,
+        "stalled_days": 6.1
       },
       {
         "number": 5730,
@@ -1796,8 +1797,8 @@
           "pydanty:promotional"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5730",
-        "age_days": 9.0,
-        "stalled_days": 5.4
+        "age_days": 9.5,
+        "stalled_days": 5.9
       },
       {
         "number": 5726,
@@ -1812,8 +1813,8 @@
           "pydanty:promotional"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5726",
-        "age_days": 9.3,
-        "stalled_days": 9.2
+        "age_days": 9.7,
+        "stalled_days": 9.7
       },
       {
         "number": 5676,
@@ -1829,8 +1830,8 @@
           "stale-issues"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5676",
-        "age_days": 11.9,
-        "stalled_days": 3.9
+        "age_days": 12.3,
+        "stalled_days": 4.3
       },
       {
         "number": 5641,
@@ -1844,8 +1845,8 @@
           "question"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5641",
-        "age_days": 13.9,
-        "stalled_days": 13.8
+        "age_days": 14.3,
+        "stalled_days": 14.2
       },
       {
         "number": 5634,
@@ -1858,8 +1859,8 @@
           "pydanty:promotional"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5634",
-        "age_days": 14.2,
-        "stalled_days": 13.8
+        "age_days": 14.7,
+        "stalled_days": 14.3
       },
       {
         "number": 5625,
@@ -1872,8 +1873,8 @@
           "bug"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5625",
-        "age_days": 14.9,
-        "stalled_days": 14.3
+        "age_days": 15.4,
+        "stalled_days": 14.8
       }
     ],
     "stale": [],
@@ -1892,8 +1893,8 @@
           "pydanty:bug"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5778",
-        "age_days": 3.2,
-        "stalled_days": 2.9
+        "age_days": 3.6,
+        "stalled_days": 3.4
       },
       {
         "number": 5769,
@@ -1910,8 +1911,8 @@
           "regression"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5769",
-        "age_days": 4.5,
-        "stalled_days": 3.0
+        "age_days": 4.9,
+        "stalled_days": 3.5
       },
       {
         "number": 5765,
@@ -1927,8 +1928,8 @@
           "pydanty:bug"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5765",
-        "age_days": 4.7,
-        "stalled_days": 2.6
+        "age_days": 5.1,
+        "stalled_days": 3.1
       },
       {
         "number": 5732,
@@ -1944,8 +1945,8 @@
           "pydanty:bug"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5732",
-        "age_days": 8.6,
-        "stalled_days": 6.6
+        "age_days": 9.1,
+        "stalled_days": 7.1
       },
       {
         "number": 5722,
@@ -1960,8 +1961,8 @@
           "agentic-workflows"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5722",
-        "age_days": 9.8,
-        "stalled_days": 9.3
+        "age_days": 10.2,
+        "stalled_days": 9.8
       },
       {
         "number": 5716,
@@ -1977,8 +1978,8 @@
           "agentic-workflows"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5716",
-        "age_days": 9.9,
-        "stalled_days": 9.3
+        "age_days": 10.4,
+        "stalled_days": 9.8
       },
       {
         "number": 5715,
@@ -1994,8 +1995,8 @@
           "pydanty:bug"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5715",
-        "age_days": 9.9,
-        "stalled_days": 9.2
+        "age_days": 10.4,
+        "stalled_days": 9.7
       },
       {
         "number": 5672,
@@ -2012,8 +2013,8 @@
           "pydanty:bug"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5672",
-        "age_days": 12.1,
-        "stalled_days": 10.9
+        "age_days": 12.6,
+        "stalled_days": 11.3
       },
       {
         "number": 5671,
@@ -2029,8 +2030,8 @@
           "pydanty:bug"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5671",
-        "age_days": 12.2,
-        "stalled_days": 5.8
+        "age_days": 12.7,
+        "stalled_days": 6.2
       },
       {
         "number": 5665,
@@ -2046,8 +2047,8 @@
           "pydanty:feature"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5665",
-        "age_days": 12.8,
-        "stalled_days": 12.8
+        "age_days": 13.3,
+        "stalled_days": 13.3
       },
       {
         "number": 5663,
@@ -2063,8 +2064,8 @@
           "pydanty:model-request"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5663",
-        "age_days": 12.9,
-        "stalled_days": 5.7
+        "age_days": 13.4,
+        "stalled_days": 6.2
       },
       {
         "number": 5659,
@@ -2080,8 +2081,8 @@
           "stale-issues"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5659",
-        "age_days": 13.0,
-        "stalled_days": 13.0
+        "age_days": 13.4,
+        "stalled_days": 13.4
       },
       {
         "number": 5650,
@@ -2097,8 +2098,8 @@
           "pydanty:bug"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5650",
-        "age_days": 13.5,
-        "stalled_days": 13.4
+        "age_days": 14.0,
+        "stalled_days": 13.8
       },
       {
         "number": 5645,
@@ -2114,8 +2115,8 @@
           "agentic-workflows"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5645",
-        "age_days": 13.8,
-        "stalled_days": 13.7
+        "age_days": 14.2,
+        "stalled_days": 14.2
       },
       {
         "number": 5639,
@@ -2128,8 +2129,8 @@
           "agentic-workflows"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5639",
-        "age_days": 13.9,
-        "stalled_days": 13.8
+        "age_days": 14.4,
+        "stalled_days": 14.2
       },
       {
         "number": 5635,
@@ -2143,8 +2144,8 @@
           "provider-bedrock"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5635",
-        "age_days": 14.1,
-        "stalled_days": 13.7
+        "age_days": 14.5,
+        "stalled_days": 14.2
       },
       {
         "number": 5626,
@@ -2160,8 +2161,8 @@
           "pydanty:bug"
         ],
         "url": "https://github.com/pydantic/pydantic-ai/issues/5626",
-        "age_days": 14.9,
-        "stalled_days": 13.9
+        "age_days": 15.4,
+        "stalled_days": 14.4
       }
     ]
   }
